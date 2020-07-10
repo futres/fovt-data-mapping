@@ -68,7 +68,7 @@ measurement_unit <- function(data, change, check)
 ## rename columns
 col_rename<- function(data, template, old, new)
 {
-  names(data) <- gsub("\\.", " ", colnames(data))
+  data <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data)
   x <- c()
   for(i in 1:nrow(template))
@@ -90,8 +90,6 @@ col_rename<- function(data, template, old, new)
 #   measurement_unit("measurementUnit", "variable") %>%
 #   col_rename(cougar_template, "Column.Name", "Template.Name")
 
-aepyceros_template <- delete_empty_r_and_c(aepyceros_template)
-aepyceros_data <- col_rename(aepyceros_data, aepyceros_template, "label", "term")
 
 aepyceros_data <- aepyceros_data %>%
   delete_empty_r_and_c() %>%
@@ -100,4 +98,4 @@ aepyceros_data <- aepyceros_data %>%
   #melt_data("Length", "Weight") %>%
   #add_col() %>%
   #measurement_unit("measurementUnit", "variable") %>%
-  #col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new ="term")
+  col_rename(aepyceros_template, "label", "term")
