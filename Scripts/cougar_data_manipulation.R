@@ -36,6 +36,14 @@ status <- function(data, column, check, replace)
   return(data)
 }
 
+#why did this function change?
+#previous function:
+#cougar_sex <- function(x, y)
+#{
+#  x[,y] <- gsub(pattern = "\\<f", replacement = "female", x[,y], ignore.case = TRUE)
+#  x[,y] <- gsub(pattern = "\\<m", replacement = "male", x[,y], ignore.case = TRUE)
+#  return(x)
+#}
 
 sex <- function(data, column, check, replace)
 {
@@ -46,15 +54,15 @@ sex <- function(data, column, check, replace)
   return(data)
 }
 
-repo_condition <- function(data,)
+repo_condition <- function(data, #reproductive, non.reproductive) #where reproductive is a vector of possible values that gets labeled "reproductive" and non.reproductive is a vector of values that gets labeled "non-reproductive"
 {
   
 }
 
-life_stage <- function(data, column)
+life_stage <- function(data, #adult, juvenile) #where adult is a vector of possible values that gets labeled "adult" and juvenile is a vector of possible values that gets labeled "juvenile"
 {
-  data[,column] <- replace(data[,column], grep("\\<a", data[,column], ignore.case = TRUE), "Adult")
-  data[,column] <- replace(data[,column], grep("\\<j", data[,column], ignore.case = TRUE), "Juvinile")
+  data[,column] <- replace(data[,column], grep("\\<a", data[,column], ignore.case = TRUE), "Adult") #needs to be lower case
+  data[,column] <- replace(data[,column], grep("\\<j", data[,column], ignore.case = TRUE), "Juvinile") #needs to be lower case
   return(data)
 }
 ## melt data & filter empty values
