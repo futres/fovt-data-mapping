@@ -14,7 +14,7 @@ library(janitor)
 cougar_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/column%20name%20template.csv")
 cougar_data <- read.csv("https://de.cyverse.org/dl/d/F2088922-D273-49AE-985F-8D55966627A9/1987to2019_Cougar_Weight_Length_Public_Request.csv")
 aepyceros_data <- read.csv("https://de.cyverse.org/dl/d/28031164-7903-4EC1-BA86-6441741BAB35/Extant_Aepyceros_database_updated_11_2016.csv", sep = ",", dec = " ")
-aepyceros_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/trait%20mapping.csv", header = TRUE, stringsAsFactors = TRUE)
+aepyceros_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/ontology_codeBook.csv", header = TRUE, stringsAsFactors = TRUE)
 
 
 ## delete empty rows and columns
@@ -54,8 +54,8 @@ sex <- function(data, column)
 {
   # data = dataframe
   # column = selected column from data frame
-  x[,y] <- gsub(pattern = "\\<f", replacement = "female", x[,y], ignore.case = TRUE) # if values in the column starts w 'f' replace it with 'female'
-  x[,y] <- gsub(pattern = "\\<m", replacement = "male", x[,y], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'male'
+  data[,column] <- gsub(pattern = "\\<f", replacement = "female", data[,column], ignore.case = TRUE) # if values in the column starts w 'f' replace it with 'female'
+  data[,column] <- gsub(pattern = "\\<m", replacement = "male", data[,columna], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'male'
   return(data)
 }
 
@@ -63,8 +63,8 @@ left_right <- function(data, column)
 {
   # data = dataframe
   # column = selected column from data frame
-  x[,y] <- gsub(pattern = "\\<l", replacement = "left", x[,y], ignore.case = TRUE) # if values in the column starts w 'l' replace it with 'left'
-  x[,y] <- gsub(pattern = "\\<r", replacement = "right", x[,y], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'female'
+  data[,column] <- gsub(pattern = "\\<l", replacement = "left", data[,column], ignore.case = TRUE) # if values in the column starts w 'l' replace it with 'left'
+  data[,column] <- gsub(pattern = "\\<r", replacement = "right", data[,column], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'female'
 }
 
 repo_condition <- function(data, column, reproductive, non.reproductive)
@@ -103,8 +103,8 @@ melt_data <- function(data, col1, col2)
   # data = dataframe
   # col1 = first column we are melting
   # col2 = second column we are melting
-  data <- melt(data, measure.vars = c(col1, col2))
-  dplyr::filter(data, !is.na(value))
+  data <- melt(data, measure.vars = c(col1, col2)) # takes data from col1 and col2 and places it all into a column called value & labels this data from col1 and col2 with the names of those two columns
+  dplyr::filter(data, !is.na(value)) # deletes all NA in value column
 }
 
 ## add new column measuremnetUnit
@@ -127,11 +127,12 @@ measurement_unit <- function(data, change, check)
 
 ## rename columns
 col_rename<- function(data, template, old, new)
+{
   # data = dataframe
   # template = terms being mapped
   # old = old names of columns
   # new = new names of columns
-{
+  names(data) <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data) # vector cols created w column names of dataframe as values
   for(i in 1:nrow(template)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
   {
