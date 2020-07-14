@@ -4,7 +4,6 @@ R program that is used to clean up and standardize data sets.
 
 Since data is collected by all sorts of places using different languages and even units of measurement there is no universal standard for it. 
 Having a program that sets it to a standard and even cleans it up can make it much easier to understand the data. 
-
 ```
 For example: This is an excerpt from the cougar data set prior to data cleaning. There are empty columns with no data in them, the meaning of the status column is very hard to understand, and the values in the sex column are just initialied.
 ```
