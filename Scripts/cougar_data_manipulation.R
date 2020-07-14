@@ -8,6 +8,9 @@ library(anchors)
 library(plyr)
 library(reshape2)
 library(janitor)
+library(shiny)
+library(rsconnect)
+rsconnect::deployApp('path/to/your/app')
 
 
 ## updated set gets rid of columns w no data
@@ -20,7 +23,6 @@ aepyceros_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-da
 ## delete empty rows and columns
 delete_empty_r_and_c <- function(data){
   data <-data %>%
-    mutate_all(funs(na_if("", " "))) %>% # if value of something in the data is blank then set it to NA
     remove_empty("cols") %>% # removes all NA cols
     remove_empty("rows") # removes all NA rows
   return(data)
@@ -55,7 +57,7 @@ sex <- function(data, column)
   # data = dataframe
   # column = selected column from data frame
   data[,column] <- gsub(pattern = "\\<f", replacement = "female", data[,column], ignore.case = TRUE) # if values in the column starts w 'f' replace it with 'female'
-  data[,column] <- gsub(pattern = "\\<m", replacement = "male", data[,columna], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'male'
+  data[,column] <- gsub(pattern = "\\<m", replacement = "male", data[,column], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'male'
   return(data)
 }
 
@@ -132,7 +134,7 @@ col_rename<- function(data, template, old, new)
   # template = terms being mapped
   # old = old names of columns
   # new = new names of columns
-  names(data) <- gsub("\\.", " ", colnames(data))
+  # names(data) <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data) # vector cols created w column names of dataframe as values
   for(i in 1:nrow(template)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
   {
@@ -153,8 +155,8 @@ cougar_data <- cougar_data %>%
   measurement_unit("measurementUnit", "variable") %>%
   col_rename(cougar_template, "Column.Name", "Template.Name")
 
-aepyceros_data1 <- life_stage(aepyceros_data, "Age..juv..prime.adult..older.adult..old.")
-aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
+# aepyceros_data1 <- life_stage(aepyceros_data, "Age..juv..prime.adult..older.adult..old.")
+# aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
 
 aepyceros_data <- aepyceros_data %>%
   delete_empty_r_and_c() %>%
