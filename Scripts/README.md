@@ -8,6 +8,8 @@ Having a program that sets it to a standard and even cleans it up can make it mu
 For example:
 
 ```
+
+```
 > head(cougar_data)
      Date Management.Unit    County Sex Age Status Weight Length  X X.1 X.2
 1 5/19/87        Mt Emily  Umatilla   F   4      A    105     75 NA  NA  NA
@@ -27,6 +29,4 @@ For example:
 4       10/4/87        McKenzie      Lane female   2 Intact          Length               73              mm
 5      11/18/87       Applegate Josephine   male   2 Intact          Length               84              mm
 6      11/21/87          Indigo      Lane   male   2 Intact          Length               84              mm
-```
-
 ```
