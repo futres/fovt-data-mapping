@@ -32,7 +32,7 @@ delete_empty_r_and_c <- function(data){
 status <- function(data, column, check, replace) 
 {
   # data = dataframe
-  # column = selected cloumn from dataframe
+  # column = selected column from dataframe
   # check = values already in data frame, vector created to check for these values
   # replace = what the values from the check vector are to be replaced with
   for(i in 1:length(check)) # i is incremented by 1, it starts at one and goes through how ever many values are in check
