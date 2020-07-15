@@ -178,15 +178,15 @@ melt_data <- function(data, cols)
 {
   # data = dataframe
   # cols = vector of columns to melt
-  data <- melt(data, measure.vars = c(col1, col2)) # takes data from col1 and col2 and places it all into a column called value & labels this data from col1 and col2 with the names of those two columns
+  data <- reshape2::melt(data, measure.vars = cols) # takes data from col1 and col2 and places it all into a column called value & labels this data from col1 and col2 with the names of those two columns
   dplyr::filter(data, !is.na(value)) # deletes all NA in value column
 }
 
 #Example
 #data = cougar_data
 #cols = c("Weight", "Length") or c(7,8)
-
-
+new.data <- melt_data(data = cougar_data, cols = c("Weight", "Length"))
+new.data <- melt_data(data = cougar_data, cols = c(7,8))
 
 ################################################################################
 
@@ -238,12 +238,13 @@ template_match <- function(data, template, old, new)
 }
 
 #Example
-#data = cougar_data
+#data = new.data
 #template = cougar_template
 #old = 'Column.Name'
 #new = 'Template.Name'
+new.data <- melt_data(data = cougar_data, cols = c(7,8))
 
-new.data <- template_match(data = cougar_data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
+melt.data <- template_match(data = new.data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
 
 ################################################################################
 
