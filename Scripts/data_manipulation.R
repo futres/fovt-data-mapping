@@ -62,8 +62,8 @@ sex <- function(data, column)
 {
   # data = dataframe
   # column = selected column from data frame
-  data[,column] <- gsub(pattern = "\\<f", replacement = "female", data[,column], ignore.case = TRUE) # if values in the column starts w 'f' replace it with 'female'
-  data[,column] <- gsub(pattern = "\\<m", replacement = "male", data[,column], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'male'
+  data[,column] <- replace(data[,column], grep("^f", data[,column], ignore.case = TRUE), "female") # if values in the column starts w 'f' replace it with 'female'
+  data[,column] <- replace(data[,column], grep("^m", data[,column], ignore.case = TRUE), "male") # if values in the column starts w 'r' replace it with 'male'
   return(data)
 }
 
@@ -79,8 +79,8 @@ measurementSide <- function(data, column)
 {
   # data = dataframe
   # column = selected column from data frame
-  data[,column] <- gsub(pattern = "\\<l", replacement = "left", data[,column], ignore.case = TRUE) # if values in the column starts w 'l' replace it with 'left'
-  data[,column] <- gsub(pattern = "\\<r", replacement = "right", data[,column], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'female'
+  data[,column] <- replace(data[,column], grep("^l", data[,column], ignore.case = TRUE), "left") # if values in the column starts w 'l' replace it with 'left'
+  data[,column] <- replace(data[,column], grep("^r", data[,column], ignore.case = TRUE), "right") # if values in the column starts w 'r' replace it with 'female'
   return(data)
 }
 
@@ -220,6 +220,7 @@ template_match <- function(data, template, old, new)
   # new = new names of columns
   names(data) <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data) # vector cols created w column names of dataframe as values
+  replace_name <- as.vector(template[,new])
   for(i in 1:ncol(data)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
   {
     if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
