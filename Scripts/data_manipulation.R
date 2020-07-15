@@ -224,12 +224,16 @@ template_match <- function(data, template, old, new)
   {
     if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
     { 
-      colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
-    }
-    else{
-      next
+      if(isTRUE(template[,old] == cols[i]))
+      {
+        colnames(data)[i] <- replace_name[i]
+      }
     }
   }
+    # if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
+    # { 
+    #   colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
+    # }
   return(data)
 }
 
