@@ -52,8 +52,6 @@ Fixing measurementSide to "right" or "left"
 ```
 new.data <- measurementSide(data = deer_data, column = 'Side')
 ```
-new.data <- measurementSide(data = deer_data, column = 'Side')
-```
 
 Standardizing lifeStage to "adult" or "juvenile"
 ```
