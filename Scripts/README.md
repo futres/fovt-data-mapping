@@ -19,6 +19,22 @@ For example: This is an excerpt from the cougar data set prior to data cleaning.
 ```
 This this the same data set after it has been run through the program. Unnecessary columns and rows have been removed, columns have been renamed, and values have been specified.
 
+To correct sex to "female" or "male":
+
+```
+new.data <- sex(data = cougar_data, column = 'Sex')
+```
+
+To correct materialSampleType (Status in the cougar dataset):
+```
+new.data <- materialSampleType(data = cougar_data, column = 'Status', check = c("A", "B", "C"), replace = c("Whole Organism", "Part Organism - Skinned", "Part Organism - Gutted"))
+```
+
+To map template terms as new column names:
+```
+new.data <- template_match(data = cougar_data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
+```
+
 ```
 > head(cougar_data)
   yearCollected Management Unit    County    Sex Age Status measurementType measurementValue measurementUnit
@@ -29,3 +45,24 @@ This this the same data set after it has been run through the program. Unnecessa
 5      11/18/87       Applegate Josephine   male   2 Intact          Length               84              mm
 6      11/21/87          Indigo      Lane   male   2 Intact          Length               84              mm
 ```
+
+Other functions include:
+
+Fixing measurementSide to "right" or "left"
+```
+new.data <- measurementSide(data = deer_data, column = 'Side')
+```
+
+Standardizing lifeStage to "adult" or "juvenile"
+```
+new.data <- lifeStage(data = aepyceros_data, column = 'Age..juv..prime.adult..older.adult..old.', adult = adult, juvenile = juvenile)
+```
+
+Standardizing reproductiveCondition to "reproductive" or "non-reproductive"
+```
+new.data <- reproductiveCondition(data = deer_data, column = "reproductiveCondition", reproductive = reproductive, non.reproductive = non.reproductive)
+```
+
+Mapping measurementTypes to match the ontology terms:
+```
+````
