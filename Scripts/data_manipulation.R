@@ -174,14 +174,19 @@ new.data <- lifeStage(data = aepyceros_data, column = 'Age..juv..prime.adult..ol
 
 
 ## melt data & filter empty values
-melt_data <- function(data, col1, col2)
+melt_data <- function(data, cols)
 {
   # data = dataframe
-  # col1 = first column we are melting
-  # col2 = second column we are melting
+  # cols = vector of columns to melt
   data <- melt(data, measure.vars = c(col1, col2)) # takes data from col1 and col2 and places it all into a column called value & labels this data from col1 and col2 with the names of those two columns
   dplyr::filter(data, !is.na(value)) # deletes all NA in value column
 }
+
+#Example
+#data = cougar_data
+#cols = c("Weight", "Length") or c(7,8)
+
+
 
 ################################################################################
 
@@ -215,7 +220,7 @@ template_match <- function(data, template, old, new)
   # new = new names of columns
   names(data) <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data) # vector cols created w column names of dataframe as values
-  for(i in 1:nrow(template)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
+  for(i in 1:ncol(data)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
   {
     if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
     { 
@@ -235,8 +240,6 @@ template_match <- function(data, template, old, new)
 #new = 'Template.Name'
 
 new.data <- template_match(data = cougar_data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
-
-## This needs fixing....hmmm
 
 ################################################################################
 
