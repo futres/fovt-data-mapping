@@ -197,12 +197,20 @@ col_rename<- function(data, template, old, new)
   # new = new names of columns
   names(data) <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data) # vector cols created w column names of dataframe as values
+  replace_name <- as.vector(template[,new])
   for(i in 1:nrow(template)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
   {
     if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
     { 
-      colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
+      if(isTRUE(template[,old] == cols[i]))
+      {
+        colnames(data)[i] <- replace_name[i]
+      }
     }
+    # if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
+    # { 
+    #   colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
+    # }
   }
   return(data)
 }
