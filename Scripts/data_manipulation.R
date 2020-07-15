@@ -27,7 +27,6 @@ deer_data <- read.csv("https://de.cyverse.org/dl/d/0E1B3FC0-ADCC-45E7-95ED-F4E11
 ## function to delete empty rows and columns
 delete_empty_r_and_c <- function(data){
   data <-data %>%
-    mutate_all(funs(na_if("", " "))) %>% # if value of something in the data is blank then set it to NA
     remove_empty("cols") %>% # removes all NA cols
     remove_empty("rows") # removes all NA rows
   return(data)
@@ -129,30 +128,47 @@ new.data <- reproductiveCondition(data = deer_data, column = "reproductiveCondit
 
 non.reproductive <- c("not pregnant, not lactating", "non pregnant, not lactating", "non pregnant, non lactating")
 reproductive <- unique(deer_data$reproductiveCondition)
-reproductive <- reproductive[-c("", "--", non.reproductive)]
+index <- c("", "--", non.reproductive)
+reproductive <- reproductive[!(reproductive %in% index)]
 
 new.data <- reproductiveCondition(data = deer_data, column = "reproductiveCondition", 
-                                  reproductive = -c("", "--", non.reproductive),
-                                  non.reproductive = c("not pregnant, not lactating", "non pregnant, not lactating", "non pregnant, non lactating"))
-
+                                  reproductive = reproductive,
+                                  non.reproductive = non.reproductive)
 
 ################################################################################
 
 ##function to clean up life-stage
-life_stage <- function(data, adult, juvenile)
+lifeStage <- function(data, column, adult, juvenile)
 {
   # data = dataframe
   # adult = vector of all possible adult values
   # juvenile = vector of all possible juvenile values
   for(i in 1:length(adult)) # i is incremented by 1, it starts at one and goes through how ever many values are in adult
   {
-    data[,column][data[,column] == adult[i]] <- juvenile[i]
+    data[,column][data[,column] == adult[i]] <- "adult"
+  }
+  for(i in 1:length(juvenile)) # i is incremented by 1, it starts at one and goes through how ever many values are in juvenile
+  {
+    data[,column][data[,column] == juvenile[i]] <- "juvenile"
   }
   return(data)
 }
 
 #Example
+#data = aepyceros_data
+#column = 'Age..juv..prime.adult..older.adult..old.'
+#juvenile = c("Juvenile (2)", "juvenile (22-24 months), M3 erupting", "Juvenile (?) 2+ years")
+#adult = unique(aepyceros_data$Age..juv..prime.adult..older.adult..old.)
+#index = c("", juvenile)
+#adult = adult[!(adult %in% index)]
 
+juvenile = c("Juvenile (2)", "juvenile (22-24 months), M3 erupting", "Juvenile (?) 2+ years")
+adult = unique(aepyceros_data$Age..juv..prime.adult..older.adult..old.)
+index = c("", juvenile)
+adult = adult[!(adult %in% index)]
+
+new.data <- lifeStage(data = aepyceros_data, column = 'Age..juv..prime.adult..older.adult..old.',
+                      adult = adult, juvenile = juvenile)
 
 ################################################################################
 
@@ -169,15 +185,8 @@ melt_data <- function(data, col1, col2)
 
 ################################################################################
 
-
-## add new column measuremnetUnit
-add_col <- function(data)
-{
-  # data = dataframe
-  add_column(data, measurementUnit = NA) #adds column called measureUnit where all of the values are NA
-}
-## populate measurementUnit
-measurement_unit <- function(data, change, check)
+## autopopulate measurementUnit
+measurementUnit <- function(data, change, check)
 {
   # data = dataframe
   # change = column name of values being changed
@@ -188,8 +197,17 @@ measurement_unit <- function(data, change, check)
   return(data)
 }
 
-## rename columns
-col_rename<- function(data, template, old, new)
+#Example
+#data = deer_data
+#change = 'measurementUnit'
+#check = 'measurementType'
+
+## How does this work? I think it needs one more argument (e.g., something to map "length" to "mm", etc.)
+
+################################################################################
+
+## rename columns to match the template
+template_match <- function(data, template, old, new)
 {
   # data = dataframe
   # template = terms being mapped
@@ -203,11 +221,27 @@ col_rename<- function(data, template, old, new)
     { 
       colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
     }
+    else{
+      next
+    }
   }
   return(data)
 }
 
-cougar_data <- cougar_data %>%
+#Example
+#data = cougar_data
+#template = cougar_template
+#old = 'Column.Name'
+#new = 'Template.Name'
+
+new.data <- template_match(data = cougar_data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
+
+## This needs fixing....hmmm
+
+################################################################################
+
+##doing all the things!
+new_data <- cougar_data %>%
   delete_empty_r_and_c() %>%
   status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
   sex("Sex") %>%
