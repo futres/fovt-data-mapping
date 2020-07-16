@@ -218,23 +218,14 @@ template_match <- function(data, template, old, new)
   # template = terms being mapped
   # old = old names of columns
   # new = new names of columns
-  names(data) <- gsub("\\.", " ", colnames(data))
-  cols <- colnames(data) # vector cols created w column names of dataframe as values
-  replace_name <- as.vector(template[,new])
-  for(i in 1:ncol(data)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
-  {
-    if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
-    { 
-      if(isTRUE(template[,old] == cols[i]))
-      {
-        colnames(data)[i] <- replace_name[i]
-      }
+  for(i in 1:ncol(data)){ # i incremented by 1 starting at 1 and ending at how ever many columns are in the data
+    if(isTRUE(colnames(data)[i] %in% template[,old])){ # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
+        colnames(data)[i] <- template[,new][template[,old] == colnames(data)[i]] 
+    }
+    else{
+      next
     }
   }
-    # if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
-    # { 
-    #   colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
-    # }
   return(data)
 }
 
@@ -244,7 +235,7 @@ template_match <- function(data, template, old, new)
 #old = 'Column.Name'
 #new = 'Template.Name'
 new.data <- melt_data(data = cougar_data, cols = c(7,8))
-
+names(new.data) <- gsub("\\.", " ", colnames(new.data))
 melt.data <- template_match(data = new.data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
 
 ################################################################################
