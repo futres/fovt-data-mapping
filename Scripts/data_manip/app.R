@@ -125,7 +125,7 @@ ui <- fluidPage(
                          selected = "No"),
             
             conditionalPanel(
-                condition = "input.side == 'age_yes'",
+                condition = "input.age == 'age_yes'",
                 textInput("age_col", "Column Name", value = "", width = NULL,
                           placeholder = NULL),
                 textInput("adult", "All adult names(Seperate with commas)", value = "", width = NULL,
@@ -157,37 +157,39 @@ ui <- fluidPage(
             
             conditionalPanel(
                 condition = "input.temp == 'temp_yes'",
-                fileInput("file_temp", "Choose CSV File",
+                fileInput("temp_file", "Choose CSV File",
                           multiple = TRUE,
                           accept = c("text/csv",
                                      "text/comma-separated-values,text/plain",
                                      ".csv")),
                 
-                # 
-                # # Horizontal line ----
-                # tags$hr(),
-                # 
-                # # Input: Checkbox if file has header ----
-                # checkboxInput("header", "Header", TRUE),
-                # 
-                # # Input: Select separator ----
-                # radioButtons("sep", "Separator",
-                #              choices = c(Comma = ",",
-                #                          Semicolon = ";",
-                #                          Tab = "\t"),
-                #              selected = ","),
-                # 
-                # # Input: Select quotes ----
-                # radioButtons("quote", "Quote",
-                #              choices = c(None = "",
-                #                          "Double Quote" = '"',
-                #                          "Single Quote" = "'"),
-                #              selected = '"'),
+                # Horizontal line ----
+                tags$hr(),
+                
+                # Input: Checkbox if file has header ----
+                checkboxInput("temp_header", "Header", TRUE),
+                
+                # Input: Select separator ----
+                radioButtons("temp_sep", "Separator",
+                             choices = c(Comma = ",",
+                                         Semicolon = ";",
+                                         Tab = "\t"),
+                             selected = ","),
+                
+                # Input: Select quotes ----
+                radioButtons("temp_quote", "Quote",
+                             choices = c(None = "",
+                                         "Double Quote" = '"',
+                                         "Single Quote" = "'"),
+                             selected = '"'),
                 
                 textInput("temp_col_old", "Column Name for Old Columns", value = "", width = NULL,
                           placeholder = NULL),
-                textInput("temp_col_old", "Column Name for Old Columns", value = "", width = NULL,
+                textInput("temp_col_new", "Column Name for New Columns", value = "", width = NULL,
                           placeholder = NULL),
+                
+                # Horizontal line ----
+                tags$hr(),
             ) 
             
         ),
@@ -236,7 +238,7 @@ server <- function(input, output) {
         # or all rows if selected, will be shown.
         
         req(input$file1)
-        # req(input$temp_file)
+        req(input$temp_file)
         # 
         # template <- read.csv(input$temp_file$datapath, 
         #                      header = TRUE, sep = ",")
@@ -245,6 +247,12 @@ server <- function(input, output) {
                        header = input$header,
                        sep = input$sep,
                        quote = input$quote)
+        
+        mapping_template <- read.csv(input$temp_file$datapath,
+                       header = input$temp_header,
+                       sep = input$temp_sep,
+                       quote = input$temp_quote)
+        
         
         df <- delete_empty_r_and_c(df)
         
@@ -266,13 +274,13 @@ server <- function(input, output) {
         if(input$age == "age_yes"){
             age_adu <- unlist(strsplit(input$adult, ","))
             age_juv <- unlist(strsplit(input$juv, ","))
-            df <- materialSampleType(df, input$matSamp_col, age_adu, age_juv)
+            df <- lifeStage(df, input$matSamp_col, age_adu, age_juv)
         }
         
         if(input$repro == "repro_yes"){
             repro1 <- unlist(strsplit(input$repro_val, ","))
             nonrepro1 <- unlist(strsplit(input$non_val, ","))
-            df <- materialSampleType(df, input$matSamp_col, repro1, nonrepro1)
+            df <- reproductiveCondition(df, input$matSamp_col, repro1, nonrepro1)
         }
         
         if(input$melt == "melt_yes"){
@@ -284,9 +292,9 @@ server <- function(input, output) {
             df <- measurementUnit(df, input$meas_change, input$meas_check)
         }
         
-        # if(input$temp == "temp_yes"){
-        #     df <- template_match(df, template, input$temp_col_old, input$temp_col_new)
-        # }
+        if(input$temp == "temp_yes"){
+            df <- template_match(df, mapping_template, input$temp_col_old, input$temp_col_new)
+        }
         
         if(input$disp == "head") {
             return(head(df))
