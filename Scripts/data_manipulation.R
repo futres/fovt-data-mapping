@@ -72,6 +72,11 @@ sex <- function(data, column)
 #column = 'Sex'
 new.data <- sex(data = cougar_data, column = 'Sex')
 
+#Example
+#data = deer_data
+#column = sex
+new.data <- sex(data = deer_data, column = 'sex')
+
 ################################################################################
 
 ##function to clean up side of bone
