@@ -26,6 +26,7 @@ deer_data <- read.csv("https://de.cyverse.org/dl/d/0E1B3FC0-ADCC-45E7-95ED-F4E11
 
 ## function to delete empty rows and columns
 delete_empty_r_and_c <- function(data){
+  gsub("--", NA, data)
   data <-data %>%
     remove_empty("cols") %>% # removes all NA cols
     remove_empty("rows") # removes all NA rows
@@ -191,14 +192,14 @@ new.data <- melt_data(data = cougar_data, cols = c(7,8))
 ################################################################################
 
 ## autopopulate measurementUnit
-measurementUnit <- function(data, change, check)
+measurementUnit <- function(data)
 {
   # data = dataframe
   # change = column name of values being changed
   # check = column name of values being checked
-  data[,change] <- grepl(pattern = "\\<w", data[,check], ignore.case = TRUE) # if string starts w 'w' in check column values in change column are set to true if not they are set to false
-  data[,change][data[,change] == TRUE] <- "g" # if value in change column is true replace it with 'g'
-  data[,change][data[,change] == FALSE] <- "mm" # if value in change column is false replace it with 'mm'
+  data[,"measurementUnit"] <- grepl(pattern = "\\<w", data[,"variable"], ignore.case = TRUE) # if string starts w 'w' in check column values in change column are set to true if not they are set to false
+  data[,"measurementUnit"][data[,"measurementUnit"] == TRUE] <- "g" # if value in change column is true replace it with 'g'
+  data[,"measurementUnit"][data[,"measurementUnit"] == FALSE] <- "mm" # if value in change column is false replace it with 'mm'
   return(data)
 }
 
@@ -218,8 +219,8 @@ template_match <- function(data, template, old, new)
   # template = terms being mapped
   # old = old names of columns
   # new = new names of columns
-  for(i in 1:ncol(data)){ # i incremented by 1 starting at 1 and ending at how ever many columns are in the data
-    if(isTRUE(colnames(data)[i] %in% template[,old])){ # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
+  for(i in 1:ncol(data)){ 
+    if(isTRUE(colnames(data)[i] %in% template[,old])){ 
         colnames(data)[i] <- template[,new][template[,old] == colnames(data)[i]] 
     }
     else{
@@ -241,21 +242,24 @@ melt.data <- template_match(data = new.data, template = cougar_template, old = '
 ################################################################################
 
 ##doing all the things!
-new_data <- cougar_data %>%
-  delete_empty_r_and_c() %>%
-  materialSampleType("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
-  sex("Sex") %>%
-  melt_data(c("Length", "Weight")) %>%
-  measurementUnit("measurementUnit", "variable") %>%
-  template_match(cougar_template, "Column.Name", "Template.Name")
+# new_data <- cougar_data %>%
+#   delete_empty_r_and_c() %>%
+#   materialSampleType("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
+#   sex("Sex") %>%
+#   melt_data(c("Length", "Weight")) %>%
+#   measurementUnit("measurementUnit", "variable") %>%
+#   template_match(cougar_template, "Column.Name", "Template.Name")
 
 #aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
 
-aepyceros_data <- aepyceros_data %>%
-  delete_empty_r_and_c() %>%
-  #status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
-  sex("SEX") %>%
-  #melt_data("Length", "Weight") %>%
-  #add_col() %>%
-  #measurement_unit("measurementUnit", "variable") %>%
-  template_match(aepyceros_template, "label", "term")
+# aepyceros_data <- aepyceros_data %>%
+#   delete_empty_r_and_c() %>%
+#   #status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
+#   sex("SEX") %>%
+#   #melt_data("Length", "Weight") %>%
+#   #add_col() %>%
+#   #measurement_unit("measurementUnit", "variable") %>%
+#   template_match(aepyceros_template, "label", "term")
+
+deer <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Original%20Data/EAP%20Florida%20Modern%20Deer%20Measurements_FORFUTRES_1_23_2020.csv")
+colnames(deer)

@@ -102,20 +102,10 @@ ui <- fluidPage(
                 condition = "input.melt == 'melt_yes'",
                 textInput("melt_cols", "Column Names(Seperate with commas)", value = "", width = NULL,
                           placeholder = NULL),
-            ),
-
-################################################################################
-
-            radioButtons("measUnit", "Measurement Unit",
-                         choices = c(Yes = "meas_yes",
-                                     No = "meas_no"),
-                         selected = "No"),
-            conditionalPanel(
-                condition = "input.measUnit == 'meas_yes'",
-                textInput("meas_change", "Changing Column", value = "", width = NULL,
-                          placeholder = NULL),
-                textInput("meas_check", "Checking Column", value = "", width = NULL,
-                          placeholder = NULL),
+                radioButtons("measUnit", "Measurement Unit",
+                             choices = c(Yes = "meas_yes",
+                                         No = "meas_no"),
+                             selected = "No"),
             ),
 
 ################################################################################
@@ -238,7 +228,6 @@ server <- function(input, output) {
         # or all rows if selected, will be shown.
         
         req(input$file1)
-        req(input$temp_file)
         # 
         # template <- read.csv(input$temp_file$datapath, 
         #                      header = TRUE, sep = ",")
@@ -248,27 +237,32 @@ server <- function(input, output) {
                        sep = input$sep,
                        quote = input$quote)
         
-        mapping_template <- read.csv(input$temp_file$datapath,
-                       header = input$temp_header,
-                       sep = input$temp_sep,
-                       quote = input$temp_quote)
-        
         
         df <- delete_empty_r_and_c(df)
+        
+        continue <- 5
         
         if(input$matSamp == "matSamp_yes"){
             matSamp_check <- unlist(strsplit(input$matSamp_check, ","))
             matSamp_replace <- unlist(strsplit(input$matSamp_replace, ",")) 
             df <- materialSampleType(df, input$matSamp_col, matSamp_check, matSamp_replace)
         }
+        else{
+            continue = continue + 1
+        }
         
         if(input$sex == "sex_yes"){
             df <- sex(df, input$sex_col)
         }
-        
+        else{
+            continue = continue + 1
+        }
         
         if(input$side == "side_yes"){
             df <- measurementSide(df, input$side_col)
+        }
+        else{
+            continue = continue + 1
         }
         
         if(input$age == "age_yes"){
@@ -276,24 +270,40 @@ server <- function(input, output) {
             age_juv <- unlist(strsplit(input$juv, ","))
             df <- lifeStage(df, input$matSamp_col, age_adu, age_juv)
         }
+        else{
+            continue = continue + 1
+        }
         
         if(input$repro == "repro_yes"){
             repro1 <- unlist(strsplit(input$repro_val, ","))
             nonrepro1 <- unlist(strsplit(input$non_val, ","))
             df <- reproductiveCondition(df, input$matSamp_col, repro1, nonrepro1)
         }
+        else{
+            continue = continue + 1
+        }
         
         if(input$melt == "melt_yes"){
             meltcols <- unlist(strsplit(input$melt_cols, ","))
             df <- melt_data(df, meltcols)
+            if(input$measUnit == "meas_yes"){
+                df <- measurementUnit(df)
+            }
         }
-        
-        if(input$measUnit == "meas_yes"){
-            df <- measurementUnit(df, input$meas_change, input$meas_check)
+        else{
+            continue = continue + 1
         }
         
         if(input$temp == "temp_yes"){
+            req(input$temp_file)
+            mapping_template <- read.csv(input$temp_file$datapath,
+                                         header = input$temp_header,
+                                         sep = input$temp_sep,
+                                         quote = input$temp_quote)
             df <- template_match(df, mapping_template, input$temp_col_old, input$temp_col_new)
+        }
+        else{
+            continue = continue + 1
         }
         
         if(input$disp == "head") {

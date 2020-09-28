@@ -241,28 +241,27 @@ template_match <- function(data, template, old, new)
 #new = 'Template.Name'
 new.data <- melt_data(data = cougar_data, cols = c(7,8))
 names(new.data) <- gsub("\\.", " ", colnames(new.data))
-melt.data <- template_match(data = new.data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
+#melt.data <- template_match(data = new.data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
 
 ################################################################################
 
-##doing all the things!
-new_data <- cougar_data %>%
-  delete_empty_r_and_c() %>%
-  status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
-  sex("Sex") %>%
-  melt_data("Length", "Weight") %>%
-  add_col() %>%
-  measurement_unit("measurementUnit", "variable") %>%
-  col_rename(cougar_template, "Column.Name", "Template.Name")
-
-aepyceros_data1 <- life_stage(aepyceros_data, "Age..juv..prime.adult..older.adult..old.")
-aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
-
-aepyceros_data <- aepyceros_data %>%
-  delete_empty_r_and_c() %>%
-  #status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
-  sex("SEX")
-  #melt_data("Length", "Weight") %>%
-  #add_col() %>%
-  #measurement_unit("measurementUnit", "variable") %>%
-  col_rename(aepyceros_template, "label", "term")
+# ##doing all the things!
+# new_data <- new.data %>%
+#   delete_empty_r_and_c() %>%
+#   materialSampleType("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
+#   sex("Sex") %>%
+#   melt_data(c("Length", "Weight")) %>%
+#   measurementUnit("measurementUnit", "variable") %>%
+#   template_match(cougar_template, "Column.Name", "Template.Name")
+# 
+# aepyceros_data1 <- life_stage(aepyceros_data, "Age..juv..prime.adult..older.adult..old.")
+# aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
+# 
+# aepyceros_data <- aepyceros_data %>%
+#   delete_empty_r_and_c() %>%
+#   #status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
+#   sex("SEX")
+#   #melt_data("Length", "Weight") %>%
+#   #add_col() %>%
+#   #measurement_unit("measurementUnit", "variable") %>%
+#   template_match(aepyceros_template, "label", "term")

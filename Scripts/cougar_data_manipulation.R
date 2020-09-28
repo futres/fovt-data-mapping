@@ -1,6 +1,10 @@
-## cougar data set
+# Functions for Data Clean UP
+# Prasiddhi Gyawali & Meghan Balk
+# prasiddhi@email.arizona.edu; balkm@email.arizona.edu
 
-## installed packages
+################################################################################
+
+## install packages
 library(tidyverse)
 library(dplyr)
 library(tibble)
@@ -8,19 +12,19 @@ library(anchors)
 library(plyr)
 library(reshape2)
 library(janitor)
-library(shiny)
-library(rsconnect)
-rsconnect::deployApp('path/to/your/app')
 
+################################################################################
 
-## updated set gets rid of columns w no data
+## LOAD DATA
 cougar_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/column%20name%20template.csv")
 cougar_data <- read.csv("https://de.cyverse.org/dl/d/F2088922-D273-49AE-985F-8D55966627A9/1987to2019_Cougar_Weight_Length_Public_Request.csv")
 aepyceros_data <- read.csv("https://de.cyverse.org/dl/d/28031164-7903-4EC1-BA86-6441741BAB35/Extant_Aepyceros_database_updated_11_2016.csv", sep = ",", dec = " ")
 aepyceros_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/ontology_codeBook.csv", header = TRUE, stringsAsFactors = TRUE)
+deer_data <- read.csv("https://de.cyverse.org/dl/d/0E1B3FC0-ADCC-45E7-95ED-F4E11075CF49/EAP_Florida_Modern_Deer_Measurements_FORFUTRES_1_23_2020.csv", header = TRUE, stringsAsFactors = FALSE)
 
+################################################################################
 
-## delete empty rows and columns
+## function to delete empty rows and columns
 delete_empty_r_and_c <- function(data){
   data <-data %>%
     remove_empty("cols") %>% # removes all NA cols
@@ -28,8 +32,10 @@ delete_empty_r_and_c <- function(data){
   return(data)
 }
 
-## update status
-status <- function(data, column, check, replace) 
+################################################################################
+
+## function to standardize materialSampleType
+materialSampleType <- function(data, column, check, replace) 
 {
   # data = dataframe
   # column = selected column from dataframe
@@ -37,39 +43,56 @@ status <- function(data, column, check, replace)
   # replace = what the values from the check vector are to be replaced with
   for(i in 1:length(check)) # i is incremented by 1, it starts at one and goes through how ever many values are in check
   {
-    #data[,column][condition] <- replace[i]
     data[,column][data[,column] == check[i]] <- replace[i]
   }
   return(data)
 }
 
-#why did this function change?
-#previous function:
-#cougar_sex <- function(x, y)
-#{
-#  x[,y] <- gsub(pattern = "\\<f", replacement = "female", x[,y], ignore.case = TRUE)
-#  x[,y] <- gsub(pattern = "\\<m", replacement = "male", x[,y], ignore.case = TRUE)
-#  return(x)
-#}
+#Example
+#data = cougar_data
+#column = 'Status'
+#check = c("A", "B", "C")
+#replace = c("Whole Organism", "Part Organism - Skinned", "Part Organism - Gutted")
+new.data <- materialSampleType(data = cougar_data, column = 'Status', check = c("A", "B", "C"), replace = c("Whole Organism", "Part Organism - Skinned", "Part Organism - Gutted"))
 
+################################################################################
+
+##function to clean up sex types if misspelled or not complete
 sex <- function(data, column)
 {
   # data = dataframe
   # column = selected column from data frame
-  data[,column] <- gsub(pattern = "\\<f", replacement = "female", data[,column], ignore.case = TRUE) # if values in the column starts w 'f' replace it with 'female'
-  data[,column] <- gsub(pattern = "\\<m", replacement = "male", data[,column], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'male'
+  data[,column] <- replace(data[,column], grep("^f", data[,column], ignore.case = TRUE), "female") # if values in the column starts w 'f' replace it with 'female'
+  data[,column] <- replace(data[,column], grep("^m", data[,column], ignore.case = TRUE), "male") # if values in the column starts w 'r' replace it with 'male'
   return(data)
 }
 
-left_right <- function(data, column)
+#Example
+#data = cougar_data
+#column = 'Sex'
+new.data <- sex(data = cougar_data, column = 'Sex')
+
+################################################################################
+
+##function to clean up side of bone
+measurementSide <- function(data, column)
 {
   # data = dataframe
   # column = selected column from data frame
-  data[,column] <- gsub(pattern = "\\<l", replacement = "left", data[,column], ignore.case = TRUE) # if values in the column starts w 'l' replace it with 'left'
-  data[,column] <- gsub(pattern = "\\<r", replacement = "right", data[,column], ignore.case = TRUE) # if values in the column starts w 'r' replace it with 'female'
+  data[,column] <- replace(data[,column], grep("^l", data[,column], ignore.case = TRUE), "left") # if values in the column starts w 'l' replace it with 'left'
+  data[,column] <- replace(data[,column], grep("^r", data[,column], ignore.case = TRUE), "right") # if values in the column starts w 'r' replace it with 'female'
+  return(data)
 }
 
-repo_condition <- function(data, column, reproductive, non.reproductive)
+#Example
+#data = deer_data
+#column = 'Side'
+new.data <- measurementSide(data = deer_data, column = 'Side')
+
+################################################################################
+
+##function to standardize reproductive condition
+reproductiveCondition <- function(data, column, reproductive, non.reproductive)
 {
   # data = dataframe
   # column = column where reproductive/non.reproductive data is being stored
@@ -77,46 +100,98 @@ repo_condition <- function(data, column, reproductive, non.reproductive)
   # non.reproductive = vector of things that are classified as non-reproductive
   for(i in 1:length(reproductive)) # i is incremented by 1, it starts at one and goes through how ever many values are in reproductive
   {
-    #data[,column][condition] <- "reproductive"
     data[,column][data[,column] == reproductive[i]] <- "reproductive"
   }
   for(i in 1:length(non.reproductive)) # i is incremented by 1, it starts at one and goes through how ever many values are in non.reproductive
   {
-    #data[,column][condition] <- "non-reproductive"
     data[,column][data[,column] == non.reproductive[i]] <- "non-reproductive"
   }
+  return(data)
 }
 
-life_stage <- function(data, adult, juvenile)
+#Example
+#data = deer_data
+#column = reproductiveCondition
+#reproductive <- c("several weeks pregnant", "\"pregnant (2 fetus) within two weeks of birth\"", "\"pregnant, 1 female fetus 22 wks\"", "\"not preg, quiet ovaries, lactating, lots of milk, enlarged glands\"", "\"non pregnant\" lactating", "\"not pregnant\" lactating", "non pregnant, not lactating but glands present, note says 2 yearlings nearby", "pregnant, 1 fetus female 23 weeks (#85-61)", "non pregnant, not lactating, medium nipples", "non pregnant, lactating", "not pregnant, maybe lactating", "not pregnant, lactating, \"fawn at side #85-66\" (although note that 85-66 in this list is 16 months so not suckling fawn, and actually 85-68 lists Dam as 85-67 so that was an error and fawn is 85-68)", "not pregnant, lactating", "non pregnant, lactating, had ~6-7mo fawn at side", "lactating [assume non pregnant]")
+#non.reproductive <- c("not pregnant, not lactating", "non pregnant, not lactating", "non pregnant, non lactating")
+
+new.data <- reproductiveCondition(data = deer_data, column = "reproductiveCondition", 
+                                  reproductive = c("several weeks pregnant", "\"pregnant (2 fetus) within two weeks of birth\"", "\"pregnant, 1 female fetus 22 wks\"", "\"not preg, quiet ovaries, lactating, lots of milk, enlarged glands\"", "\"non pregnant\" lactating", "\"not pregnant\" lactating", "non pregnant, not lactating but glands present, note says 2 yearlings nearby", "pregnant, 1 fetus female 23 weeks (#85-61)", "non pregnant, not lactating, medium nipples", "non pregnant, lactating", "not pregnant, maybe lactating", "not pregnant, lactating, \"fawn at side #85-66\" (although note that 85-66 in this list is 16 months so not suckling fawn, and actually 85-68 lists Dam as 85-67 so that was an error and fawn is 85-68)", "not pregnant, lactating", "non pregnant, lactating, had ~6-7mo fawn at side", "lactating [assume non pregnant]"),
+                                  non.reproductive = c("not pregnant, not lactating", "non pregnant, not lactating", "non pregnant, non lactating"))
+
+#Example
+#data = deer_data
+#column = reproductiveCondition
+#reproductive <- unique(deer_data$reproductiveCondition)
+#reproductive <- reproductive[-c("", "--", non.reproductive)]
+#non.reproductive <- c("not pregnant, not lactating", "non pregnant, not lactating", "non pregnant, non lactating")
+
+non.reproductive <- c("not pregnant, not lactating", "non pregnant, not lactating", "non pregnant, non lactating")
+reproductive <- unique(deer_data$reproductiveCondition)
+index <- c("", "--", non.reproductive)
+reproductive <- reproductive[!(reproductive %in% index)]
+
+new.data <- reproductiveCondition(data = deer_data, column = "reproductiveCondition", 
+                                  reproductive = reproductive,
+                                  non.reproductive = non.reproductive)
+
+################################################################################
+
+##function to clean up life-stage
+lifeStage <- function(data, column, adult, juvenile)
 {
   # data = dataframe
   # adult = vector of all possible adult values
   # juvenile = vector of all possible juvenile values
   for(i in 1:length(adult)) # i is incremented by 1, it starts at one and goes through how ever many values are in adult
   {
-    #data[,column][condition] <- juvenile[i]
-    data[,column][data[,column] == adult[i]] <- juvenile[i]
+    data[,column][data[,column] == adult[i]] <- "adult"
+  }
+  for(i in 1:length(juvenile)) # i is incremented by 1, it starts at one and goes through how ever many values are in juvenile
+  {
+    data[,column][data[,column] == juvenile[i]] <- "juvenile"
   }
   return(data)
 }
+
+#Example
+#data = aepyceros_data
+#column = 'Age..juv..prime.adult..older.adult..old.'
+#juvenile = c("Juvenile (2)", "juvenile (22-24 months), M3 erupting", "Juvenile (?) 2+ years")
+#adult = unique(aepyceros_data$Age..juv..prime.adult..older.adult..old.)
+#index = c("", juvenile)
+#adult = adult[!(adult %in% index)]
+
+juvenile = c("Juvenile (2)", "juvenile (22-24 months), M3 erupting", "Juvenile (?) 2+ years")
+adult = unique(aepyceros_data$Age..juv..prime.adult..older.adult..old.)
+index = c("", juvenile)
+adult = adult[!(adult %in% index)]
+
+new.data <- lifeStage(data = aepyceros_data, column = 'Age..juv..prime.adult..older.adult..old.',
+                      adult = adult, juvenile = juvenile)
+
+################################################################################
+
+
 ## melt data & filter empty values
-melt_data <- function(data, col1, col2)
+melt_data <- function(data, cols)
 {
   # data = dataframe
-  # col1 = first column we are melting
-  # col2 = second column we are melting
-  data <- melt(data, measure.vars = c(col1, col2)) # takes data from col1 and col2 and places it all into a column called value & labels this data from col1 and col2 with the names of those two columns
+  # cols = vector of columns to melt
+  data <- reshape2::melt(data, measure.vars = cols) # takes data from col1 and col2 and places it all into a column called value & labels this data from col1 and col2 with the names of those two columns
   dplyr::filter(data, !is.na(value)) # deletes all NA in value column
 }
 
-## add new column measuremnetUnit
-add_col <- function(data)
-{
-  # data = dataframe
-  add_column(data, measurementUnit = NA) #adds column called measureUnit where all of the values are NA
-}
-## populate measurementUnit
-measurement_unit <- function(data, change, check)
+#Example
+#data = cougar_data
+#cols = c("Weight", "Length") or c(7,8)
+new.data <- melt_data(data = cougar_data, cols = c("Weight", "Length"))
+new.data <- melt_data(data = cougar_data, cols = c(7,8))
+
+################################################################################
+
+## autopopulate measurementUnit
+measurementUnit <- function(data, change, check)
 {
   # data = dataframe
   # change = column name of values being changed
@@ -127,42 +202,70 @@ measurement_unit <- function(data, change, check)
   return(data)
 }
 
-## rename columns
-col_rename<- function(data, template, old, new)
+#Example
+#data = deer_data
+#change = 'measurementUnit'
+#check = 'measurementType'
+
+## How does this work? I think it needs one more argument (e.g., something to map "length" to "mm", etc.)
+
+################################################################################
+
+## rename columns to match the template
+template_match <- function(data, template, old, new)
 {
   # data = dataframe
   # template = terms being mapped
   # old = old names of columns
   # new = new names of columns
-  # names(data) <- gsub("\\.", " ", colnames(data))
+  names(data) <- gsub("\\.", " ", colnames(data))
   cols <- colnames(data) # vector cols created w column names of dataframe as values
-  for(i in 1:nrow(template)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
+  replace_name <- as.vector(template[,new])
+  for(i in 1:ncol(data)) # i incremented by 1 starting at 1 and ending at how ever many rows are in the template data
   {
     if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
     { 
-      colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
+      if(isTRUE(template[,old] == cols[i]))
+      {
+        colnames(data)[i] <- replace_name[i]
+      }
     }
   }
+  # if(isTRUE(colnames(data)[i] %in% template[,old])) # if the name of the column from the old column exists  then move on to the next line if not data is incremented again
+  # { 
+  #   colnames(data)[i] <- template[,new][template[,old] == cols[i]] # if condition from is statement is met rename column in the original data set whatever it is being mapped to in the template data
+  # }
   return(data)
 }
 
-cougar_data <- cougar_data %>%
-  delete_empty_r_and_c() %>%
-  status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
-  sex("Sex") %>%
-  melt_data("Length", "Weight") %>%
-  add_col() %>%
-  measurement_unit("measurementUnit", "variable") %>%
-  col_rename(cougar_template, "Column.Name", "Template.Name")
+#Example
+#data = new.data
+#template = cougar_template
+#old = 'Column.Name'
+#new = 'Template.Name'
+new.data <- melt_data(data = cougar_data, cols = c(7,8))
 
-# aepyceros_data1 <- life_stage(aepyceros_data, "Age..juv..prime.adult..older.adult..old.")
-# aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
+melt.data <- template_match(data = new.data, template = cougar_template, old = 'Column.Name', new = "Template.Name")
+
+################################################################################
+
+##doing all the things!
+new_data <- cougar_data %>%
+  delete_empty_r_and_c() %>%
+  materialSampleType("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
+  sex("Sex") %>%
+  melt_data(c("Length", "Weight")) %>%
+  measurementUnit("measurementUnit", "variable") %>%
+  template_match(cougar_template, "Column.Name", "Template.Name")
+
+aepyceros_data1 <- life_stage(aepyceros_data, "Age..juv..prime.adult..older.adult..old.")
+aepyceros_data1 <- col_rename(data = aepyceros_data, template = aepyceros_template, old = "label", new = "term")
 
 aepyceros_data <- aepyceros_data %>%
   delete_empty_r_and_c() %>%
   #status("Status", c("A", "B", "C"), c("Intact", "Field Dressed", "Skinned")) %>%
   sex("SEX")
-  #melt_data("Length", "Weight") %>%
-  #add_col() %>%
-  #measurement_unit("measurementUnit", "variable") %>%
-  col_rename(aepyceros_template, "label", "term")
+#melt_data("Length", "Weight") %>%
+#add_col() %>%
+#measurement_unit("measurementUnit", "variable") %>%
+col_rename(aepyceros_template, "label", "term")

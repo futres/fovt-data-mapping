@@ -1,0 +1,12 @@
+name: data_manip
+title: data_manip
+username:
+account: prasiddhigyawali
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2603176
+bundleId: 3423482
+url: https://prasiddhigyawali.shinyapps.io/data_manip/
+when: 1595457128.52219
+asMultiple: FALSE
+asStatic: FALSE
