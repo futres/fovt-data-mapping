@@ -2,6 +2,8 @@
 # Prasiddhi Gyawali & Meghan Balk
 # prasiddhi@email.arizona.edu; balkm@email.arizona.edu
 
+## COPIED INTO RShiny app
+
 ################################################################################
 
 ## install packages
