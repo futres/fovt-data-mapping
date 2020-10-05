@@ -1,5 +1,5 @@
 # Functions for Data Clean UP
-# Prasiddhi Gyawali & Meghan Balk
+# Prasiddhi Gyawali & Meghan Balk 
 # prasiddhi@email.arizona.edu; balkm@email.arizona.edu
 
 ################################################################################
@@ -13,16 +13,12 @@ library(plyr)
 library(reshape2)
 library(janitor)
 
-################################################################################
-
 ## LOAD DATA
 cougar_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/column%20name%20template.csv")
 cougar_data <- read.csv("https://de.cyverse.org/dl/d/F2088922-D273-49AE-985F-8D55966627A9/1987to2019_Cougar_Weight_Length_Public_Request.csv")
 aepyceros_data <- read.csv("https://de.cyverse.org/dl/d/28031164-7903-4EC1-BA86-6441741BAB35/Extant_Aepyceros_database_updated_11_2016.csv", sep = ",", dec = " ")
 aepyceros_template <- read.csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/cougar_test/Mapping%20Files/ontology_codeBook.csv", header = TRUE, stringsAsFactors = TRUE)
 deer_data <- read.csv("https://de.cyverse.org/dl/d/0E1B3FC0-ADCC-45E7-95ED-F4E11075CF49/EAP_Florida_Modern_Deer_Measurements_FORFUTRES_1_23_2020.csv", header = TRUE, stringsAsFactors = FALSE)
-
-################################################################################
 
 ## function to delete empty rows and columns
 delete_empty_r_and_c <- function(data){
@@ -32,7 +28,8 @@ delete_empty_r_and_c <- function(data){
   return(data)
 }
 
-################################################################################
+
+#TODO: Vectorize this 
 
 ## function to standardize materialSampleType
 materialSampleType <- function(data, column, check, replace) 
@@ -55,8 +52,6 @@ materialSampleType <- function(data, column, check, replace)
 #replace = c("Whole Organism", "Part Organism - Skinned", "Part Organism - Gutted")
 new.data <- materialSampleType(data = cougar_data, column = 'Status', check = c("A", "B", "C"), replace = c("Whole Organism", "Part Organism - Skinned", "Part Organism - Gutted"))
 
-################################################################################
-
 ##function to clean up sex types if misspelled or not complete
 sex <- function(data, column)
 {
@@ -77,8 +72,6 @@ new.data <- sex(data = cougar_data, column = 'Sex')
 #column = sex
 new.data <- sex(data = deer_data, column = 'sex')
 
-################################################################################
-
 ##function to clean up side of bone
 measurementSide <- function(data, column)
 {
@@ -93,8 +86,6 @@ measurementSide <- function(data, column)
 #data = deer_data
 #column = 'Side'
 new.data <- measurementSide(data = deer_data, column = 'Side')
-
-################################################################################
 
 ##function to standardize reproductive condition
 reproductiveCondition <- function(data, column, reproductive, non.reproductive)
@@ -140,8 +131,6 @@ new.data <- reproductiveCondition(data = deer_data, column = "reproductiveCondit
                                   reproductive = reproductive,
                                   non.reproductive = non.reproductive)
 
-################################################################################
-
 ##function to clean up life-stage
 lifeStage <- function(data, column, adult, juvenile)
 {
@@ -175,9 +164,6 @@ adult = adult[!(adult %in% index)]
 new.data <- lifeStage(data = aepyceros_data, column = 'Age..juv..prime.adult..older.adult..old.',
                       adult = adult, juvenile = juvenile)
 
-################################################################################
-
-
 ## melt data & filter empty values
 melt_data <- function(data, cols)
 {
@@ -192,8 +178,6 @@ melt_data <- function(data, cols)
 #cols = c("Weight", "Length") or c(7,8)
 new.data <- melt_data(data = cougar_data, cols = c("Weight", "Length"))
 new.data <- melt_data(data = cougar_data, cols = c(7,8))
-
-################################################################################
 
 ## autopopulate measurementUnit
 measurementUnit <- function(data, change, check)
