@@ -29,7 +29,6 @@ delete_empty_r_and_c <- function(data){
 }
 
 
-#TODO: Vectorize this 
 
 ## function to standardize materialSampleType
 materialSampleType <- function(data, column, check, replace) 
