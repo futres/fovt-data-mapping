@@ -25,13 +25,30 @@ def get_args():
 def clean_sex(sex):
     """cleans sex column in dataset"""
     #can catch incorrect information, needs testing
-    if sex.str.contains("female|F"):
+    if sex.str.contains("female|F|mujeres|"):
         sex = "female"
-    elif sex.str.contains("male|M"):
+    elif sex.str.contains("male|M|hombres"):
         sex = "male"
     else:
+        #TODO: print index
+        print(sex)
         sex = "not collected"
+        #TODO: print(number  changed)
     return sex
+
+def clean_side(side):
+    """cleans side column in dataset"""
+    #can catch incorrect information, needs testing
+    if side.str.contains("R|right|D|derecha"):
+        side = "right"
+    elif side.str.contains("L|left|I|izquierda"):
+        side = "left"
+    else:
+        #TODO: print index
+        print(side)
+        side = "not collected"
+        #TODO: print(number  changed)
+    return side
 
 def clean_year(year):
     """isolates year in dataset"""
@@ -48,11 +65,14 @@ def scientific_name(name):
 def clean_up(data):
     """runs clean up function suite, keeps main clean"""
     data["sex"] = data["sex"].apply(clean_sex)
+    data["side"] = data["side"].apply(clean_side)
     data["yearCollected"] = data["yearCollected"].apply(clean_year)
     data["scientificName"] = data["scientificName"].apply(scientific_name)
 
-#adding a universal country handler would be useful
-#checking discrepencies in lat and long values would be useful
+#TODO add country function, match to geome country list, print out discrepencies
+
+#TODO checking discrepencies in lat and long values using country quadrants (flag it)
+
 
 
 
@@ -63,10 +83,12 @@ def main():
 args = get_args()
 data = args
 
-#need a way to standardize column names before clean up functions
-#do we want to rename columns with regex?
-#needs to also initalize columns such as diagnostic ID
+#TODO create dummy file for testing
 
+#TODO develop python dictionary for  columns, taking in user input to  create
+#dynamic  dictionary 
+
+#TODO outfile creation for run log (csv file)
 
 clean_up(data)
 
