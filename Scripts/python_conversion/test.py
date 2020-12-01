@@ -4,24 +4,25 @@
 import os
 from subprocess import getstatusoutput, getoutput
 
-prg = './cougar_test.py'
-
+#MAB: making it so that can pass any file to test_exists
 
 # --------------------------------------------------
-def test_exists():
+def test_exists(data):
     """exists"""
+    
+    assert os.path.isfile(data)
 
-    assert os.path.isfile(prg)
-
+#test_exists('./cougar_test.py')
 
 # --------------------------------------------------
-def test_runnable():
+def test_runnable(data):
     """Runs using python3"""
 
-    out = getoutput(f'python3 {prg}')
+    out = getoutput(f'python3 {data}')
     assert out.strip() == 'Python3 Enabled'
 
-
+#test_runnable('./cougar_test.py')
+    
 # --------------------------------------------------
 def test_executable():
     #"""Says 'Hello, World!' by default"""
