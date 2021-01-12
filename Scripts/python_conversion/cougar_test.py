@@ -80,30 +80,30 @@ def clean_up(data):
     data["scientificName"] = data["scientificName"].apply(scientific_name)
     return data
 
-def column_correct(data,column_name_dict):
+#def column_correct(data,column_name_dict):
     """corrects column name"""
 
     #Establish column dictionary
-    column_name_dict = {}
-    column_name_dict["sex"]  = ["Sex","Gender","gender"]
-    column_name_dict["side"] = ["Side"]
-    column_name_dict["yearCollected"] = ["Year", "Date", "date"]
-    column_name_dict["scientificName"] = ["Scientific Name", "taxon","name","Name"]
+    #column_name_dict = {}
+#    column_name_dict["sex"]  = ["Sex","Gender","gender"]
+#    column_name_dict["side"] = ["Side"]
+#    column_name_dict["yearCollected"] = ["Year", "Date", "date"]
+#    column_name_dict["scientificName"] = ["Scientific Name", "taxon","name","Name"]
 
-    for column in data:
-        if column in column_name_dict.values:
-            return column
-        elif column in column_name_dict.keys():
-            column = column_name_dict[column]
-            return column 
-        else:
-            print("Error! Column unknown")
+    #for column in data:
+    #    if column in column_name_dict.values:
+    #        return column
+    #    elif column in column_name_dict.keys():
+    #        column = column_name_dict[column]
+    #        return column 
+    #    else:
+    #        print("Error! Column unknown")
             #TODO: prompt user for correct input, modify dictionary 
             #what did you mean by "column"? Does it match any of ours?
 
 
 #TODO add country function, match to geome country list, print out discrepencies
-def country_correct(country)
+def country_correct(country):
     #put this somewhere else
     geome_countries = pd.read_csv("./../../Mapping Files/geome_country_list.csv")
 
@@ -119,10 +119,10 @@ args = get_args()
 data = args
 
 # Fix column names
-column_correct(data,column_name_dict)
+# column_correct(data,column_name_dict)
 
 # Adds index column to data
-data['ind'] = np.arange(len(data))
+data['ind'] = np.arange(1, data.shape[0] + 1)
 
 # Passes data to cleaning functions
 clean_up(data)
