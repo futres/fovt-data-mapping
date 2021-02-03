@@ -2,26 +2,43 @@
 """ Data Wrangler Automation """
 """ Author: Neeka Sewnath """
 
-import argparse
+import sys
 import os
+import pandas as pd
 
-def get_args() -> Args:
-    """ Get command-line arguments """
+def clean_sex(sex):
+    """cleans sex column in dataset"""
+    #can catch incorrect information, needs testing
 
-    parser = argparse.ArgumentParser(
-        description='Data Wrangler Automation',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    print(sex)
+    if sex.contains("female|F|mujeres"):
+        sex = "female"
+        print("I think it worked")
 
-    if os.path.isfile(args.data):
-        args.data = open(args.data).read().rstrip()
 
-    return Args(args.data)
+        
+   # elif sex.str.contains("male|M|hombres"):
+   #     sex = "male"
+   # else:
+   #     print(sex)
+   #     sex = "not collected"
+   #     #TODO: print(number  changed)
+   # return sex
+
+def clean_up(data):
+    """runs clean up function suite, keeps main clean"""
+    data["SEX"].apply(clean_sex)
 
 # --------------------------------------------------
-def main() -> None:
-    """ Make a jazz noise here """
+def main():
 
-    args = get_args()
+    # Read new data
+    ifile = open(sys.argv[1], 'rb')
+    data = pd.read_csv(ifile)
+    
+    # Initate clean up sequence
+    clean_up(data)
+
 
 # --------------------------------------------------
 if __name__ == '__main__':
