@@ -1,0 +1,3 @@
+"name","type","length","leftDigits","rightDigits"
+"country_code","STRING","3","0","0"
+"country_name","STRING","32","0","0"

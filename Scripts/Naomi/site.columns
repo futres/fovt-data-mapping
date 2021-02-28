@@ -1,0 +1,6 @@
+"name","type","length","leftDigits","rightDigits"
+"site_code","STRING","7","0","0"
+"site_name","STRING","40","0","0"
+"country_code","STRING","3","0","0"
+"region","STRING","20","0","0"
+"location","STRING","16","0","0"

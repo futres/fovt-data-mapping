@@ -1,0 +1,4 @@
+"name","type","length","leftDigits","rightDigits"
+"species_id","INTEGER","1","1","0"
+"common_name","STRING","20","0","0"
+"latin_name","STRING","20","0","0"

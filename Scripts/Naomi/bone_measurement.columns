@@ -1,0 +1,7 @@
+"name","type","length","leftDigits","rightDigits"
+"site_code","STRING","7","0","0"
+"reference_id","INTEGER","3","3","0"
+"period_id","INTEGER","2","2","0"
+"bone_id","INTEGER","4","4","0"
+"measurement_type_code","STRING","5","0","0"
+"measurement_value","DECIMAL","5","3","2"

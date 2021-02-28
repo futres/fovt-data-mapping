@@ -1,0 +1,4 @@
+"name","type","length","leftDigits","rightDigits"
+"measurement_type_code","STRING","5","1","0"
+"measurement_type_name","STRING","80","0","0"
+"reference","STRING","39","0","0"

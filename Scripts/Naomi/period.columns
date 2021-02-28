@@ -1,0 +1,4 @@
+"name","type","length","leftDigits","rightDigits"
+"period_id","INTEGER","2","2","0"
+"period_name","STRING","23","0","0"
+"sequence_number","INTEGER","2","2","0"
