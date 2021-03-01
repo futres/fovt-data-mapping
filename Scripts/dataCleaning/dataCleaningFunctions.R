@@ -53,19 +53,16 @@ data.noInfer_Adults <- subset(df.mh, subset = c(df.mh$measurementStatus != "outl
                                                     
 limits <- function(df, group, trait){
 	df %>%
-	dplyr::group_by(group_by, trait) %>%
+	dplyr::group_by(group, trait) %>%
 	dplyr::summarise(sampleSize = length(measurementValue[!is.na(measurementValue) & measurementValue > 0]),
-					 avgValue = mean(measurementValue[!is.na(measurementValue) & measurementValue > 0], na.rm = TRUE),
-                     sigmaValue = sd(measurementValue[!is.na(measurementValue) & measurementValue > 0], na.rm = TRUE),
-                     upperLimit = avgValue + (3*sigmaValue),
-                     lowerLimit = avgValue - (3*sigmaValue)) %>%
+		 	 avgValue = mean(measurementValue[!is.na(measurementValue) & measurementValue > 0], na.rm = TRUE),
+                     	 sigmaValue = sd(measurementValue[!is.na(measurementValue) & measurementValue > 0], na.rm = TRUE),
+                     	 upperLimit = avgValue + (3*sigmaValue),
+                     	 lowerLimit = avgValue - (3*sigmaValue)) %>%
               as.data.frame()
 }
 
-traits = unique(measurementType)
-for(i in traits){
-	limits(df, group = "scientificName", trait = traits)
-}
+limits(df, group = "scientificName", trait = "measurementType")
 
 #merge things together
 
