@@ -39,3 +39,21 @@ However, with a couple of conversions, it can be transformed into something like
 The functions offered by this program are limited at this time. However, datasets can still be cleaned and transformed 
 using various functions found in the program.
 
+```
+matSampType()
+```
+The function presented above allows for the transformation from vague descriptions like A, B, and C to descriptors that 
+give more insight onto the dataset. 
+
+```
+sex()
+```
+The sex functions also provides for more description within datasets. It takes values like "F" and "M" and changes them 
+into "female" and "male". This function also checks for values that it does not recognize and changes them into 
+"not collected".
+
+```
+inandp_conv()
+```
+This function changes values presented with the inch unit to millimeters and values presented with the pount unit to
+grams. This allows for a universally understood format which increases accessibility of the data. 
