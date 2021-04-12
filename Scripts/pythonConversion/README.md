@@ -47,6 +47,7 @@ To achive best results it is asked that all dates are set to a "year, month, day
       4) Go to the "Date" category
       5) Select the "year-month-day" format and click "OK"
 
+<h3>Functions</h3>
 ```
 matSampType()
 ```
