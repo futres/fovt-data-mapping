@@ -66,9 +66,9 @@ into "female" and "male". This function also checks for values that it does not 
 
 -----------------------------------------------------------------------------------------------------------------------
 
-<h4>Unit Converstion Function: These allows for a universally understood format which increases accessibility of the data.</h4>
+<h3>Unit Converstion Function: These allows for a universally understood format which increases accessibility of the data.</h3>
 
-<h5>Users will be asked what units their weights and lengths are in the unedited version of their data.</h5>
+<h4>Users will be asked what units their weights and lengths are in the unedited version of their data.</h4>
 
 ```
 inConv(df)
