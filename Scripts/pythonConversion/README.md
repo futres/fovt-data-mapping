@@ -47,12 +47,14 @@ To achive best results it is asked that all dates are set to a "year, month, day
       4) Go to the "Date" category
       5) Select the "year-month-day" format and click "OK"
 
+-----------------------------------------------------------------------------------------------------------------------
+
 <h3>Functions</h3>
 
 ```
 matSampType()
 ```
-The function presented above allows for the transformation from vague descriptions like A, B, and C to descriptors that 
+Function presented above allows for the transformation from vague descriptions like A, B, and C to descriptors that 
 give more insight onto the dataset. 
 
 ```
@@ -62,8 +64,48 @@ The sex functions also provides for more description within datasets. It takes v
 into "female" and "male". This function also checks for values that it does not recognize and changes them into 
 "not collected".
 
+-----------------------------------------------------------------------------------------------------------------------
+
+<h4>Unit Converstion Function: These allows for a universally understood format which increases accessibility of the data.</h4>
+
+<h5>Users will be asked what units their weights and lengths are in the unedited version of their data.</h5>
+
 ```
-inandp_conv()
+inConv(df)
 ```
-This function changes values presented with the inch unit to millimeters and values presented with the pount unit to
-grams. This allows for a universally understood format which increases accessibility of the data. 
+Function changes values presented in the length column with the inch unit to millimeters.
+
+```
+cmConv(df)
+```
+Changes values centimeter values in the length column to millimeters. 
+```
+mConv(df)
+```
+If values in the length column are in meters this function will change them to millimeters.
+
+```
+lbsConv(df)
+```
+Measurements in the weight column which are initially in pounds are changed to grams.
+```
+kgConv(df)
+```
+Kilogram to gram conversion for the weight column.
+```
+mgConv(df)
+```
+Conversion of milligrams to grams for the weight column. 
+
+-----------------------------------------------------------------------------------------------------------------------
+
+<h3>Changing Column Names</h3>
+
+Once all other functions have been run the program will present the data set and ask users if they would like to change the name of the columns.
+
+If the user says yes, the following function will be run:
+```
+colRename(df)
+```
+The function create an empty list and asks the user what they would like each table to be named, the user inputs are then appended to the created list.
+The list is then used to change the column names.
