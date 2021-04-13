@@ -6,58 +6,86 @@ import pandas as pd
 import re
 import json
 
-# import courgar data directly from github
-coug_data = pd.read_csv(r'/Users/prasiddhigyawali/Downloads/KEYS APP DEMO/cougar_data.csv')
 
-print(coug_data)
+# import courgar data directly from github
+df = pd.read_csv(r'/Users/prasiddhigyawali/Downloads/coug_data.csv')
+
+## PRE-CLEANING
 
 # delete empty columns
-#coug_data.dropna(how = 'all', axis = 'columns', inplace = True)
+df.dropna(how = 'all', axis = 'columns', inplace = True)
 # delete empty rows
-#coug_data.dropna(how = 'all', axis = 'rows', inplace = True)
+df.dropna(how = 'all', axis = 'rows', inplace = True)
 
+## DATA STANDARDIZAION
 
-# combines Management Unit and County columns to make verbatimLocality
-coug_data = coug_data.assign(verbatimLocality = coug_data['Management Unit'] + ', ' + coug_data['County'])
+def verLocal(df): 
+    # combines Management Unit and County columns to make verbatimLocality
+    df = df.assign(verbatimLocality = df['Management Unit'] + ', ' + df['County'])
+    df = df.drop(columns=['Management Unit', 'County'])
+    return df
 
-def matSampType():
+def matSampType(df):
     # more description to status column -- in connection with GENOME
-    whole = coug_data['Status'].str.contains('A', case=False)
-    gutted = coug_data['Status'].str.contains('B', case=False)
-    skinned = coug_data['Status'].str.contains('C', case=False)
+    whole = df['Status'].eq("A", "a")
+    gutted = df['Status'].eq("B", "b")
+    skinned = df['Status'].eq("C", "c")
 
-    coug_data['Status'][whole == True] = "whole organism"
-    coug_data['Status'][gutted == True] = "part organism"
-    coug_data['Status'][skinned == True] = "part organism"
+    df['Status'][whole == True] = "whole organism"
+    df['Status'][gutted == True] = "part organism"
+    df['Status'][skinned == True] = "part organism"
+    return df
 
-# create yearCollected column & populate
-coug_data = coug_data.rename(columns = {"Date":"yearCollected", 'Status':'materialSampleType'})
 
-# sex column: F --> female & M --> male && 
+def sex(df):
+    # sex column: F --> female & M --> male && 
 
-preCln = json.loads(coug_data['Sex'].value_counts().to_json())
+    # counts values pre-cleaning
+    # changes 
+    female = df['Sex'].eq("F", "f")
+    male = df['Sex'].eq("M", "m")
+    df['Sex'][(female == False)&(male==False)] = "not collected"
+    df['Sex'][female == True] = "female"
+    df['Sex'][male == True] = "male"
+    return df
 
-# counts values pre-cleaning
-# changes 
-female = coug_data['Sex'].str.contains('F', case=False)
-male = coug_data['Sex'].str.contains('M', case=False)
-coug_data['Sex'][(female == False)&(male==False)] = "not collected"
-coug_data['Sex'][female == True]= "female"
-coug_data['Sex'][male == True]= "male"
-# counts values post cleaning
 
-#postCln = json.loads(coug_data['Sex'].value_counts().to_json())
-
-def inandp_conv(): 
+def in_and_p_conv(df):
     # converting weight and length from inches to mm & pounds to grams
-    coug_data['Length'] = coug_data['Length'] * 25.4
-    coug_data['Weight'] = coug_data['Weight'] * 453.59237
+    df['Length'] = df['Length'] * 25.4
+    df['Weight'] = df['Weight'] * 453.59237
+    return df
+
+def yc(df):
+    # create and populate yearCollected
+    df = df.assign(yearCollected = df['Date'].str[:4])
+    return df
+
+def colRename(df):
+    col_names = []
+    for i in range(len(df.columns)):
+        inpt = input("What would you like column " + str(i + 1) + " to be named?: ")
+        col_names.append(inpt)
+    df.columns = col_names
+    return df
 
 
-# deletes Management Unit, County, and Date columns
-coug_data = coug_data.drop(columns=['Management Unit', 'County'])
+df = verLocal(df)
+df = matSampType(df)
+df = sex(df)
+df = in_and_p_conv(df)
+df = yc(df)
 
-# prints dataset
-print(coug_data)
-print(preCln)
-#print(postCln)
+print("This is your current data frame: ")
+print(df)
+
+choice = input("Would you like to change the column names? (Enter ""Yes"" or ""No""): ")
+
+
+if choice == "Yes":
+    colRename(df)
+    print("Your finalized data frame: ")
+    print(df)
+else:
+    print("Your finalized data frame: ")
+    print(df)
