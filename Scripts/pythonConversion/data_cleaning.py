@@ -1,6 +1,6 @@
 # Functions for Data Clean UP
-# Prasiddhi Gyawali & Meghan Balk
-# prasiddhi@email.arizona.edu; balkm@email.arizona.edu
+# Prasiddhi Gyawali & Meghan Balk & Neeka Sewnath
+# prasiddhi@email.arizona.edu; balkm@email.arizona.edu; nsewnath@ufl.edu
 
 import pandas as pd
 import re
@@ -9,6 +9,26 @@ import json
 
 # import courgar data directly from github
 df = pd.read_csv(r'/Users/prasiddhigyawali/Downloads/coug_data.csv')
+
+# asking what the units of the weight values are
+wght = input("What units are the weight values in? ")
+
+while True:
+    if wght == "pounds" or wght == "kilomgrams" or wght == "milligrams" or wght == "grams":
+        break
+    print("Sorry! That is not an accepted weight unit.")
+    print("This program accepts: ""pounds"", ""kilograms"", ""milligrams"", and ""grams"".")
+    wght = input("What units are the weight values in? ")
+
+# asking what the units of the length values are
+lngth = input("What units are the length values in? ")
+
+while True:
+    if lngth == "inches" or lngth == "centimeters" or lngth == "meters" or lngth == "millimeters":
+        break
+    print("Sorry! That is not an accepted length unit.")
+    print("This program accepts: ""inches"", ""centimeters"", ""meters"", and ""millimeters"".")
+    lngth = input("What units are the length values in? ")
 
 ## PRE-CLEANING
 
@@ -22,6 +42,7 @@ df.dropna(how = 'all', axis = 'rows', inplace = True)
 def verLocal(df): 
     # combines Management Unit and County columns to make verbatimLocality
     df = df.assign(verbatimLocality = df['Management Unit'] + ', ' + df['County'])
+    # deletes management unity and county columns
     df = df.drop(columns=['Management Unit', 'County'])
     return df
 
@@ -40,8 +61,7 @@ def matSampType(df):
 def sex(df):
     # sex column: F --> female & M --> male && 
 
-    # counts values pre-cleaning
-    # changes 
+    # changes values
     female = df['Sex'].eq("F", "f")
     male = df['Sex'].eq("M", "m")
     df['Sex'][(female == False)&(male==False)] = "not collected"
@@ -50,18 +70,44 @@ def sex(df):
     return df
 
 
-def in_and_p_conv(df):
-    # converting weight and length from inches to mm & pounds to grams
+def inConv(df):
+    # converting length from inches to millimeters
     df['Length'] = df['Length'] * 25.4
+    return df
+
+def lbsConv(df):
+    # converting weight from pounds to grams
     df['Weight'] = df['Weight'] * 453.59237
     return df
 
+def cmConv(df):
+    # converting length from cenitmeters to millimeters
+    df['Length'] = df['Length'] * 10
+    return df
+
+def kgConv(df):
+    # converting weight from kilograms to grams
+    df['Weight'] = df['Weight'] * 1000
+    return df
+
+def mConv(df):
+    # converting length from meters to millimeters
+    df['Length'] = df['Length'] * 1000
+    return df
+
+def mgConv(df):
+    # converting weight from milligrams to grams
+    df['Weight'] = df['Weight'] / 1000
+    return df
+
+
 def yc(df):
-    # create and populate yearCollected
+    # create and populate yearCollected through the date column
     df = df.assign(yearCollected = df['Date'].str[:4])
     return df
 
 def colRename(df):
+    # renames columns through user input
     col_names = []
     for i in range(len(df.columns)):
         inpt = input("What would you like column " + str(i + 1) + " to be named?: ")
@@ -69,23 +115,44 @@ def colRename(df):
     df.columns = col_names
     return df
 
+def callAll(df):
+    df = verLocal(df)
+    df = matSampType(df)
+    df = sex(df)
+    df = yc(df)
+    return df
 
-df = verLocal(df)
-df = matSampType(df)
-df = sex(df)
-df = in_and_p_conv(df)
-df = yc(df)
+df = callAll(df)
 
+# applying weight converstion functions in accordance to inputed unit
+if wght == "pounds":
+    df = lbsConv(df)
+elif wght == "kilograms":
+    df = kgConv(df)
+elif wght == " milligrams":
+    df = mgConv(df)
+
+# applying length converstion functions in accordance to inputed unit
+if lngth == "inches":
+    df = inConv(df)
+elif lngth == "centimeters":
+    df = cmConv(df)
+elif lngth == " meters":
+    df = mConv(df)
+
+# print data frame as it is right now
 print("This is your current data frame: ")
 print(df)
 
+# asks user if they want to change column names
 choice = input("Would you like to change the column names? (Enter ""Yes"" or ""No""): ")
 
-
+# if yes runs colRename function
 if choice == "Yes":
     colRename(df)
     print("Your finalized data frame: ")
     print(df)
 else:
+    # if not prints data frame once again as it is
     print("Your finalized data frame: ")
     print(df)
