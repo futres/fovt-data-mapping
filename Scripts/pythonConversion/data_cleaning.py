@@ -6,11 +6,11 @@ import pandas as pd
 import re
 import json
 
-
-# import courgar data directly from github
+# import courgar data directly from desktop
 df = pd.read_csv(r'/Users/prasiddhigyawali/Downloads/coug_data.csv')
 
 # asking what the units of the weight values are
+print("This program accepts: ""pounds"", ""kilograms"", ""milligrams"", and ""grams"".")
 wght = input("What units are the weight values in? ")
 
 while True:
@@ -21,7 +21,9 @@ while True:
     wght = input("What units are the weight values in? ")
 
 # asking what the units of the length values are
+print("This program accepts: ""inches"", ""centimeters"", ""meters"", and ""millimeters"".")
 lngth = input("What units are the length values in? ")
+
 
 while True:
     if lngth == "inches" or lngth == "centimeters" or lngth == "meters" or lngth == "millimeters":
@@ -57,7 +59,6 @@ def matSampType(df):
     df['Status'][skinned == True] = "part organism"
     return df
 
-
 def sex(df):
     # sex column: F --> female & M --> male && 
 
@@ -68,7 +69,6 @@ def sex(df):
     df['Sex'][female == True] = "female"
     df['Sex'][male == True] = "male"
     return df
-
 
 def inConv(df):
     # converting length from inches to millimeters
@@ -100,6 +100,10 @@ def mgConv(df):
     df['Weight'] = df['Weight'] / 1000
     return df
 
+def dataMelt(df):
+    df = pd.melt(df, id_vars = ['Date','Sex', 'Age', 'Status', 'verbatimLocality'], 
+                    var_name = 'measurementType', value_name = 'measurementValue')
+    return df
 
 def yc(df):
     # create and populate yearCollected through the date column
@@ -119,6 +123,7 @@ def callAll(df):
     df = verLocal(df)
     df = matSampType(df)
     df = sex(df)
+    df = dataMelt(df)
     df = yc(df)
     return df
 
