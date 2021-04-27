@@ -1,68 +1,66 @@
-# Functions for Data Clean UP
-# Prasiddhi Gyawali & Meghan Balk & Neeka Sewnath
-# prasiddhi@email.arizona.edu; balkm@email.arizona.edu; nsewnath@ufl.edu
+"""
+Functions for Data Clean UP
+Prasiddhi Gyawali & Meghan Balk & Neeka Sewnath
+prasiddhi@email.arizona.edu; balkm@email.arizona.edu; nsewnath@ufl.edu
+"""
+
+#===========================================================================================================================================
 
 import pandas as pd
 import re
 import json
+import uuid
+import warnings
 
-# import courgar data directly from desktop
-df = pd.read_csv(r'/Users/prasiddhigyawali/Downloads/coug_data.csv')
+#===========================================================================================================================================
 
-# asking what the units of the weight values are
-print("This program accepts: ""pounds"", ""kilograms"", ""milligrams"", and ""grams"".")
-wght = input("What units are the weight values in? ")
+try:
+    import warnings
+    warnings.filterwarnings('ignore')
+except:
+    pass
 
-while True:
-    if wght == "pounds" or wght == "kilomgrams" or wght == "milligrams" or wght == "grams":
-        break
-    print("Sorry! That is not an accepted weight unit.")
-    print("This program accepts: ""pounds"", ""kilograms"", ""milligrams"", and ""grams"".")
-    wght = input("What units are the weight values in? ")
+#===========================================================================================================================================
 
-# asking what the units of the length values are
-print("This program accepts: ""inches"", ""centimeters"", ""meters"", and ""millimeters"".")
-lngth = input("What units are the length values in? ")
+def remove_rcna(df):
+    """
+    Removes empty columns and rows from df
+    """
+    df.dropna(how = 'all', axis = 'columns', inplace = True)
+    df.dropna(how = 'all', axis = 'rows', inplace = True)
+    return df
 
-
-while True:
-    if lngth == "inches" or lngth == "centimeters" or lngth == "meters" or lngth == "millimeters":
-        break
-    print("Sorry! That is not an accepted length unit.")
-    print("This program accepts: ""inches"", ""centimeters"", ""meters"", and ""millimeters"".")
-    lngth = input("What units are the length values in? ")
-
-## PRE-CLEANING
-
-# delete empty columns
-df.dropna(how = 'all', axis = 'columns', inplace = True)
-# delete empty rows
-df.dropna(how = 'all', axis = 'rows', inplace = True)
-
-## DATA STANDARDIZAION
-
+#===========================================================================================================================================
+#TODO: This needs to be modified to handle universal data
 def verLocal(df): 
-    # combines Management Unit and County columns to make verbatimLocality
+    """ 
+    Combines Management Unit and County columns to make verbatimLocality 
+    """
     df = df.assign(verbatimLocality = df['Management Unit'] + ', ' + df['County'])
     # deletes management unity and county columns
     df = df.drop(columns=['Management Unit', 'County'])
     return df
 
+#===========================================================================================================================================
+#TODO: This needs to be modified to handle universal data
 def matSampType(df):
-    # more description to status column -- in connection with GENOME
+    """
+    More description to status column -- in connection with GENOME
+    """
     whole = df['Status'].eq("A", "a")
     gutted = df['Status'].eq("B", "b")
     skinned = df['Status'].eq("C", "c")
-
     df['Status'][whole == True] = "whole organism"
     df['Status'][gutted == True] = "part organism"
     df['Status'][skinned == True] = "part organism"
     return df
 
-def sex(df):
-    # sex column: F --> female & M --> male && 
+#===========================================================================================================================================
 
-    # changes values
+def sex(df):
+    """ 
+    Standardizes sex values with GEOME vocabulary 
+    """
     female = df['Sex'].eq("F", "f")
     male = df['Sex'].eq("M", "m")
     df['Sex'][(female == False)&(male==False)] = "not collected"
@@ -70,94 +68,208 @@ def sex(df):
     df['Sex'][male == True] = "male"
     return df
 
+#===========================================================================================================================================
+
 def inConv(df):
-    # converting length from inches to millimeters
+    """
+    Converts length from inches to millimeters
+    """
     df['Length'] = df['Length'] * 25.4
     return df
 
+#===========================================================================================================================================
+
 def lbsConv(df):
-    # converting weight from pounds to grams
+    """
+    Converts weight from pounds to grams
+    """
     df['Weight'] = df['Weight'] * 453.59237
     return df
 
+#===========================================================================================================================================
+
 def cmConv(df):
-    # converting length from cenitmeters to millimeters
+    """
+    Converts length from cenitmeters to millimeters
+    """
     df['Length'] = df['Length'] * 10
     return df
 
+#===========================================================================================================================================
+
 def kgConv(df):
-    # converting weight from kilograms to grams
+    """
+    Converts weight from kilograms to grams
+    """
     df['Weight'] = df['Weight'] * 1000
     return df
 
+#===========================================================================================================================================
+
 def mConv(df):
-    # converting length from meters to millimeters
+    """
+    Converts length from meters to millimeters
+    """
     df['Length'] = df['Length'] * 1000
     return df
 
+#===========================================================================================================================================
+
 def mgConv(df):
-    # converting weight from milligrams to grams
+    """
+    Converts weight from milligrams to grams
+    """
     df['Weight'] = df['Weight'] / 1000
     return df
 
-def dataMelt(df):
-    df = pd.melt(df, id_vars = ['Date','Sex', 'Age', 'Status', 'verbatimLocality'], 
-                    var_name = 'measurementType', value_name = 'measurementValue')
-    return df
-
+#===========================================================================================================================================
+#TODO: Date needs to be removed or turned into verbatimEventDate
 def yc(df):
-    # create and populate yearCollected through the date column
+    """
+    Create and populate yearCollected through the date column
+    """
     df = df.assign(yearCollected = df['Date'].str[:4])
     return df
 
-def colRename(df):
-    # renames columns through user input
-    col_names = []
-    for i in range(len(df.columns)):
-        inpt = input("What would you like column " + str(i + 1) + " to be named?: ")
-        col_names.append(inpt)
-    df.columns = col_names
+#===========================================================================================================================================
+
+def colcheck(df):
+    """
+    Checks dataframe columns and flags column names that do not 
+    match with template. 
+    Template found here: https://github.com/futres/template/blob/master/template.csv
+    """
+    print("Checking Dataframe Columns")
+
+    geome_col_names = pd.read_csv("/Users/neeka/Desktop/FuTRES/neeka/fovt-data-mapping/Mapping Files/template_col_names.csv")
+    df_col_names = df.columns
+    error = list(set(df_col_names) - set(geome_col_names["Template Column Names"]))
+    required_columns = ['eventID', 'country','locality','yearCollected','samplingProtocol',
+                        'materialSampleID', 'basisOfRecord','scientificName','diagnosticID',
+                        'measurementMethod','measurementUnit','measurementType','measurementValue']
+    missing_req = list(set(required_columns) - set(df_col_names))
+        
+
+    print(f"These column names do not match the template: {error}")
+    print(f"These required columns are missing: {missing_req}")
+
+#    # renames columns through user input
+#    col_names = []
+#    for i in range(len(df.columns)):
+#        inpt = input("What would you like column " + str(i + 1) + " to be named?: ")
+#        col_names.append(inpt)
+#    df.columns = col_names
+#    return df
+
+#===========================================================================================================================================
+
+def add_ms_and_evID(df):
+    """
+    Adds unique hex value materialSampleID and eventID to dataframe
+    """
+    df = df.assign(materialSampleID = [uuid.uuid4().hex for _ in range(len(df.index))])
+    df = df.assign(eventID = df["materialSampleID"])
     return df
+
+#===========================================================================================================================================
+
+def handle_conversion(df):
+    """
+    Handles conversion based on user input
+    
+    """
+    # Applying weight converstion functions in accordance to inputed unit
+    if wght == "pounds":
+        df = lbsConv(df)
+    elif wght == "kilograms":
+        df = kgConv(df)
+    elif wght == " milligrams":
+        df = mgConv(df)
+
+    # Applying length converstion functions in accordance to inputed unit
+    if lngth == "inches":
+        df = inConv(df)
+    elif lngth == "centimeters":
+        df = cmConv(df)
+    elif lngth == " meters":
+        df = mConv(df)
+
+    return df
+
+#===========================================================================================================================================
+#TODO: dynamically update the id_vars with everything accept the term columns
+def dataMelt(df):
+    """
+    Converts dataframe into long format
+    """
+    df = pd.melt(df, id_vars = ['Date','Sex', 'Age', 'Status', 'verbatimLocality'], 
+                    var_name = 'measurementType', value_name = 'measurementValue')
+    return df
+    
+#===========================================================================================================================================
 
 def callAll(df):
+    """
+    Calls all standard data cleaning functions
+    """
+    print("Removing blank rows and columns...")
+    df = remove_rcna(df)
+    print("Adding verbatimLocality...")
     df = verLocal(df)
+    print("Cleaning materialSampleType...")
     df = matSampType(df)
+    print("Cleaning sex column...")
     df = sex(df)
-    df = dataMelt(df)
+    print("Cleaning yearCollected column...")
     df = yc(df)
+    print("Adding materialSampleID and eventID...")
+    df = add_ms_and_evID(df)
+    print("Converting to long format...")
+    df = dataMelt(df)
     return df
 
-df = callAll(df)
+#===========================================================================================================================================
 
-# applying weight converstion functions in accordance to inputed unit
-if wght == "pounds":
-    df = lbsConv(df)
-elif wght == "kilograms":
-    df = kgConv(df)
-elif wght == " milligrams":
-    df = mgConv(df)
+if __name__ == '__main__':
 
-# applying length converstion functions in accordance to inputed unit
-if lngth == "inches":
-    df = inConv(df)
-elif lngth == "centimeters":
-    df = cmConv(df)
-elif lngth == " meters":
-    df = mConv(df)
+    #TODO: we need to force the user to have correct column names before proceeding to cleaning
 
-# print data frame as it is right now
-print("This is your current data frame: ")
-print(df)
+    # import cougar data directly from github
+    df = pd.read_csv("/Users/neeka/Desktop/FuTRES/fovt-data-mapping/Original_Data/cougar_data.csv")
 
-# asks user if they want to change column names
-choice = input("Would you like to change the column names? (Enter ""Yes"" or ""No""): ")
+    colcheck(df)
 
-# if yes runs colRename function
-if choice == "Yes":
-    colRename(df)
-    print("Your finalized data frame: ")
+    # asking what the units of the weight values are
+    wght = input("What units are the weight values in? ")
+
+    #TODO: How do we handle mixed weight values here?
+
+    while True:
+        if wght == "pounds" or wght == "kilomgrams" or wght == "milligrams" or wght == "grams":
+            break
+        print("Sorry! That is not an accepted weight unit.")
+        print("This program accepts: ""pounds"", ""kilograms"", ""milligrams"", and ""grams"".")
+        wght = input("What units are the weight values in? ")
+
+    # asking what the units of the length values are
+    lngth = input("What units are the length values in? ")
+
+    while True:
+        if lngth == "inches" or lngth == "centimeters" or lngth == "meters" or lngth == "millimeters":
+            break
+        print("Sorry! That is not an accepted length unit.")
+        print("This program accepts: ""inches"", ""centimeters"", ""meters"", and ""millimeters"".")
+        lngth = input("What units are the length values in? ")
+
+    df = handle_conversion(df)
+    df = callAll(df)
+
+    # print data frame as it is right now
+    print("This is your current data frame: ")
     print(df)
-else:
-    # if not prints data frame once again as it is
-    print("Your finalized data frame: ")
-    print(df)
+
+    required_columns = ['eventID', 'country','locality','yearCollected','samplingProtocol',
+                        'materialSampleID', 'basisOfRecord','scientificName','diagnosticID',
+                        'measurementMethod','measurementUnit','measurementType','measurementValue']
+
+    print(f'These required columns are still missing: {list(set(required_columns) - set(df.columns))}')
