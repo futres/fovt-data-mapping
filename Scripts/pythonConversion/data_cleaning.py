@@ -207,6 +207,26 @@ def dataMelt(df):
     
 #===========================================================================================================================================
 
+def to_json(df):
+    """
+    Turns all columns that are not matching to GEOME columns into a singular dynamicProperties column
+    """
+
+    geome_col_names = pd.read_csv("/Users/neeka/Desktop/FuTRES/neeka/fovt-data-mapping/Mapping Files/template_col_names.csv")
+    df_col_names = df.columns
+
+    non_geome_cols_names = list(set(df_col_names) - set(geome_col_names["Template Column Names"]))
+    non_geome_df_cols = df[non_geome_cols_names]
+
+    df = df.assign(dynamicProperties="")
+
+    for i in non_geome_df_cols.index:
+        df["dynamicProperties"][i] = non_geome_df_cols.loc[i].to_json()
+    
+    return df
+
+#===========================================================================================================================================
+
 def callAll(df):
     """
     Calls all standard data cleaning functions
@@ -225,6 +245,8 @@ def callAll(df):
     df = add_ms_and_evID(df)
     print("Converting to long format...")
     df = dataMelt(df)
+   # print("Generating dynamicProperties column...")
+   # df = to_json(df)
     return df
 
 #===========================================================================================================================================
