@@ -156,6 +156,7 @@ def colcheck(df):
                         'measurementMethod','measurementUnit','measurementType','measurementValue']
     missing_req = list(set(required_columns) - set(df_col_names))
         
+#have it break if the set difference isn't zero
 
     print(f"These column names do not match the template: {error}")
     print(f"These required columns are missing: {missing_req}")
