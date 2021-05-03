@@ -45,6 +45,8 @@ def verLocal(df):
 #===========================================================================================================================================
 #TODO: This needs to be modified to handle universal data
 #HOW: Let the user decide which words convert to which materialSampleType
+#print out unique list of what's in there
+#ask them to write a dictionary or fix it; column of theirs and fill in column with options
 
 def matSampType(df):
     """
@@ -203,7 +205,7 @@ def handle_conversion(df):
 
 #===========================================================================================================================================
 #TODO: dynamically update the id_vars with everything accept the term columns
-#How: Let the user denote which id_vars
+#How: Let the user give the column names or range id_vars
 
 def dataMelt(df):
     """
@@ -214,6 +216,8 @@ def dataMelt(df):
     return df
     
 #===========================================================================================================================================
+
+#TODO: print out non geome columns and prompt user to proceed
 
 def to_json(df):
     """
