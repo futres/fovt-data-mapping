@@ -39,12 +39,12 @@ However, with a couple of conversions, it can be transformed into something like
 The functions offered by this program are limited at this time. However, datasets can still be cleaned and transformed 
 using various functions found in the program.
 
-To achive best results it is asked that all dates are set to a "year, month, day" format. To do this, follow these steps:
+To achive best results it is asked that all eventDates are set to a "year, month, day" format. To do this, follow these steps:
 
       1) Open up data in excel
       2) Select the column heading in which your date values are listed 
       3) Right click and select "Format Cells"
-      4) Go to the "Date" category
+      4) Go to the "eventDate" category
       5) Select the "year-month-day" format and click "OK"
 
 -----------------------------------------------------------------------------------------------------------------------
