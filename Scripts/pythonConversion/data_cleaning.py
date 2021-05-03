@@ -31,6 +31,8 @@ def remove_rcna(df):
 
 #===========================================================================================================================================
 #TODO: This needs to be modified to handle universal data
+#HOW: Let the user decide which column(s) to include as verbatimLocality
+
 def verLocal(df): 
     """ 
     Combines Management Unit and County columns to make verbatimLocality 
@@ -42,6 +44,8 @@ def verLocal(df):
 
 #===========================================================================================================================================
 #TODO: This needs to be modified to handle universal data
+#HOW: Let the user decide which words convert to which materialSampleType
+
 def matSampType(df):
     """
     More description to status column -- in connection with GENOME
@@ -55,6 +59,7 @@ def matSampType(df):
     return df
 
 #===========================================================================================================================================
+#TODO: make for non-english labels
 
 def sex(df):
     """ 
@@ -123,6 +128,7 @@ def mgConv(df):
 
 #===========================================================================================================================================
 #TODO: Date needs to be removed or turned into verbatimEventDate
+
 def yc(df):
     """
     Create and populate yearCollected through the date column
@@ -197,6 +203,8 @@ def handle_conversion(df):
 
 #===========================================================================================================================================
 #TODO: dynamically update the id_vars with everything accept the term columns
+#How: Let the user denote which id_vars
+
 def dataMelt(df):
     """
     Converts dataframe into long format
