@@ -130,6 +130,7 @@ def mgConv(df):
 
 #===========================================================================================================================================
 #TODO: Date needs to be removed or turned into verbatimEventDate
+#ask which column is EventDate or use column eventDate (should have it based off READ.md)
 
 def yc(df):
     """

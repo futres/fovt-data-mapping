@@ -68,12 +68,14 @@ into "female" and "male". This function also checks for values that it does not 
 
 <h3>Unit Converstion Function: Allow for a universally understood format which increases accessibility of the data.</h3>
 
+<h5>If you have a mix of measurement units for a type of measurement (e.g., weight in grams and pounds), please standardize before proceeding.</h5>
+
 <h4>Users will be asked what units their weights and lengths are in the unedited version of their data.</h4>
 
 ```
 inConv(df)
 ```
-Function changes values presented in the length column with the inch unit to millimeters.
+Function changes values presented in the length column with the inch unit to millimeters (1 inch = 1.54 millimeters).
 
 ```
 cmConv(df)
@@ -87,7 +89,7 @@ If values in the length column are in meters this function will change them to m
 ```
 lbsConv(df)
 ```
-Measurements in the weight column which are initially in pounds are changed to grams.
+Measurements in the weight column which are initially in pounds are changed to grams (1 pound = 453.59237 grams).
 ```
 kgConv(df)
 ```
