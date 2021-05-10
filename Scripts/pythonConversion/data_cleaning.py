@@ -172,6 +172,21 @@ def colcheck(df):
 
 #===========================================================================================================================================
 
+def countryValidity(df):
+    '''
+    Checks to make sure all country names are valid according the GENOME.
+    Valid countries can be found here: https://github.com/futres/fovt-data-mapping/blob/ade4d192a16dd329364362966eaa01d116950e1d/Mapping%20Files/geome_country_list.csv
+    '''
+    print("Checking Validity of Countries")
+
+    #GENOMEcountries = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/ade4d192a16dd329364362966eaa01d116950e1d/Mapping%20Files/geome_country_list.csv")
+    GENOMEcountries = pd.read_csv("/Users/prasiddhigyawali/Downloads/geome_country_list_copy.csv")
+    invalid = list(set(df["countries"] - set(GENOMEcountries["countries"])))
+
+    print(f"These country names are not valid according to GENOME: {invalid}")
+
+#===========================================================================================================================================
+
 def add_ms_and_evID(df):
     """
     Adds unique hex value materialSampleID and eventID to dataframe
