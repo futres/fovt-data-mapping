@@ -52,6 +52,25 @@ def matSampType(df):
     """
     More description to status column -- in connection with GENOME
     """
+
+    vals_array = df['materialSampleType'].unique()
+    vals = vals_array.toList()
+
+    count = 0
+
+    for i in range(len(vars)):
+
+        for var, defined in matSamp_dict.items():
+            if vals[i] == var:
+                count = count + 1
+
+        if count == 0:
+            rename = str(input(print(str(vals[i]) + " was not found in our dictionary. What would you like to change it to?: "))
+            chng = df['materialSampleType'].equals(var[i])
+            df['materialSampleType'][chng = True] = rename
+
+
+    '''
     whole = df['Status'].eq("A", "a")
     gutted = df['Status'].eq("B", "b")
     skinned = df['Status'].eq("C", "c")
@@ -59,6 +78,7 @@ def matSampType(df):
     df['Status'][gutted == True] = "part organism"
     df['Status'][skinned == True] = "part organism"
     return df
+    '''
 
 #===========================================================================================================================================
 #TODO: make for non-english labels
@@ -283,6 +303,9 @@ def callAll(df):
 if __name__ == '__main__':
 
     #TODO: we need to force the user to have correct column names before proceeding to cleaning
+
+    # matSampType dictionary initialization
+    matSamp_dict = defaultdict(list)
 
     # import cougar data directly from github
     df = pd.read_csv("/Users/neeka/Desktop/FuTRES/fovt-data-mapping/Original_Data/cougar_data.csv")
