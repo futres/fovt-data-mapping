@@ -30,16 +30,30 @@ def remove_rcna(df):
     return df
 
 #===========================================================================================================================================
-#TODO: This needs to be modified to handle universal data
-#HOW: Let the user decide which column(s) to include as verbatimLocality
+#TODO: add something to catch typos
 
 def verLocal(df): 
     """ 
-    Combines Management Unit and County columns to make verbatimLocality 
+    Creates verbatimLocality column from user specified columns
     """
-    df = df.assign(verbatimLocality = df['Management Unit'] + ', ' + df['County'])
-    # deletes management unity and county columns
-    df = df.drop(columns=['Management Unit', 'County'])
+
+    locality_cols= []
+    df = df.assign(verbatimLocality = "")
+
+    print(df.columns)
+
+    while True:
+        entry = input('Please select columns from dataframe to add to verbatimLocality (type d when done): ')
+        if entry.lower() == 'd':
+            break
+       # elif entry.lower() not in df.columns:
+       #     print ("Column not found in dataframe")
+       #     continue
+        else:
+            locality_cols.append(entry)
+
+    df["verbatimLocality"] = df[locality_cols].astype(str).apply(", ".join, axis=1)
+
     return df
 
 #===========================================================================================================================================
@@ -65,9 +79,9 @@ def matSampType(df):
                 count = count + 1
 
         if count == 0:
-            rename = str(input(print(str(vals[i]) + " was not found in our dictionary. What would you like to change it to?: "))
+            rename = str(input(print(str(vals[i]) + " was not found in our dictionary. What would you like to change it to?: ")))
             chng = df['materialSampleType'].equals(var[i])
-            df['materialSampleType'][chng = True] = rename
+            df['materialSampleType'][chng == True] = rename
 
 
     '''
@@ -199,7 +213,6 @@ def countryValidity(df):
     '''
     print("Checking Validity of Countries")
 
-    #GENOMEcountries = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/ade4d192a16dd329364362966eaa01d116950e1d/Mapping%20Files/geome_country_list.csv")
     GENOMEcountries = pd.read_csv("/Users/prasiddhigyawali/Downloads/geome_country_list_copy.csv")
     invalid = list(set(df["countries"] - set(GENOMEcountries["countries"])))
 
@@ -284,8 +297,8 @@ def callAll(df):
     df = remove_rcna(df)
     print("Adding verbatimLocality...")
     df = verLocal(df)
-    print("Cleaning materialSampleType...")
-    df = matSampType(df)
+    #print("Cleaning materialSampleType...")
+    #df = matSampType(df)
     print("Cleaning sex column...")
     df = sex(df)
     print("Cleaning yearCollected column...")
@@ -305,7 +318,7 @@ if __name__ == '__main__':
     #TODO: we need to force the user to have correct column names before proceeding to cleaning
 
     # matSampType dictionary initialization
-    matSamp_dict = defaultdict(list)
+    # matSamp_dict = defaultdict(list)
 
     # import cougar data directly from github
     df = pd.read_csv("/Users/neeka/Desktop/FuTRES/fovt-data-mapping/Original_Data/cougar_data.csv")
