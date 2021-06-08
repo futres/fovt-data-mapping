@@ -12,6 +12,8 @@ import json
 import uuid
 import warnings
 
+from sphinx.config import eval_config_file
+
 #===========================================================================================================================================
 
 try:
@@ -62,37 +64,23 @@ def verLocal(df):
 #print out unique list of what's in there
 #ask them to write a dictionary or fix it; column of theirs and fill in column with options
 
-def matSampType(df):
+def matSampType(df, dict):
     """
     More description to status column -- in connection with GENOME
     """
 
-    vals_array = df['materialSampleType'].unique()
-    vals = vals_array.toList()
-
-    count = 0
-
-    for i in range(len(vars)):
-
-        for var, defined in matSamp_dict.items():
-            if vals[i] == var:
-                count = count + 1
-
-        if count == 0:
-            rename = str(input(print(str(vals[i]) + " was not found in our dictionary. What would you like to change it to?: ")))
-            chng = df['materialSampleType'].equals(var[i])
-            df['materialSampleType'][chng == True] = rename
-
-
-    '''
-    whole = df['Status'].eq("A", "a")
-    gutted = df['Status'].eq("B", "b")
-    skinned = df['Status'].eq("C", "c")
-    df['Status'][whole == True] = "whole organism"
-    df['Status'][gutted == True] = "part organism"
-    df['Status'][skinned == True] = "part organism"
-    return df
-    '''
+    if df["materialSampleType"] == dict["userTerm"]:
+        correction = dict["userTerm"]
+        original = df["materialSampleType"]
+        check = input("Your data frame has the value " + original + ", did you mean " + correction + "? (input ""yes"" or ""no""): ")
+        if check == "yes":
+            df["materialSampleType"] = dict["userTerm"]
+    else:
+        original = df["materialSampleType"]
+        inpt = input("What would you like to replace " + original + " with?: ")
+        dict = dict.insert(column = "userTerm", value = "str(inpt)")
+    
+    return (df, dict)
 
 #===========================================================================================================================================
 #TODO: make for non-english labels
@@ -317,8 +305,8 @@ if __name__ == '__main__':
 
     #TODO: we need to force the user to have correct column names before proceeding to cleaning
 
-    # matSampType dictionary initialization
-    # matSamp_dict = defaultdict(list)
+    # import matSamp_dict
+    matSamp_dict = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Mapping%20Files/MST_dict.csv")
 
     # import cougar data directly from github
     df = pd.read_csv("/Users/neeka/Desktop/FuTRES/fovt-data-mapping/Original_Data/cougar_data.csv")
