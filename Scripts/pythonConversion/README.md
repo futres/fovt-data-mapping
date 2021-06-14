@@ -59,6 +59,8 @@ matSampType()
 Function presented above allows for the transformation from vague descriptions like A, B, and C to descriptors that 
 give more insight onto the dataset. 
 
+Once you have finished using this program please send a pull request for the updated matSampType dictionary file.
+
 ```
 sex()
 ```
