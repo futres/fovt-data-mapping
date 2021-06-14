@@ -2,7 +2,7 @@
 
 Conversions of the perviouly made RShiny app used to convert tabular data with some newly added functions. 
 
-**If you have any problems while running this program(come across bugs or the program fails to work with your dataset) please email futres.team@gmail.com with your concerns.**
+**If you have any problems while running this program(come across bugs or the program fails to work with your dataset) or have any questions please feel free to email futres.team@gmail.com with your concerns.**
 
 Starting off, data sets tend to look like this:
 
