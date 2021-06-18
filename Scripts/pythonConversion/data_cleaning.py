@@ -201,10 +201,9 @@ def countryValidity(df):
     '''
     print("Checking Validity of Countries")
 
-    GENOMEcountries = pd.read_csv("/Users/prasiddhigyawali/Downloads/geome_country_list_copy.csv")
-    invalid = list(set(df["countries"] - set(GENOMEcountries["countries"])))
-
-    print(f"These country names are not valid according to GENOME: {invalid}")
+    GENOMEcountries = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Mapping%20Files/geome_country_list.csv")
+    invalid = list(set(df["Countries"]) - set(GENOMEcountries["GEOME_Countries"]))
+    print(invalid)
 
 #===========================================================================================================================================
 
