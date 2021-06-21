@@ -79,6 +79,8 @@ def matSampType(df, dict):
         original = df["materialSampleType"]
         inpt = input("What would you like to replace " + original + " with?: ")
         dict = dict.insert(column = "userTerm", value = "str(inpt)")
+
+        dict.to_csv('MST_dict.csv')
     
     return (df, dict)
 
