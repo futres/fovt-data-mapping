@@ -161,6 +161,7 @@ def yc(df):
     Create and populate yearCollected through the date column
     """
     df = df.assign(yearCollected = df['Date'].str[:4])
+    df = df.rename(columns = {"Date" : "verbatimEventDate"})
     return df
 
 #===========================================================================================================================================
