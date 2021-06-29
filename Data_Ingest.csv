@@ -7,10 +7,10 @@ Amelia Villaseñor,amelia.villasenor23@gmail.com,modern & zooarchaeology,Extant_
 Jessica Blois,jblois@ucmerced.edu,modern,J.Biogeo.2008.AllData.Final.csv,https://de.cyverse.org/dl/d/ABB28EF9-FA63-4D97-B966-7DE7235D53C4/J.Biogeo.2008.AllData.Final.csv,208,,,"matched to template; ingested pes length, tail length, body length, body mass",,,,,,Y,
 ,,,,,,,,,,,,,,,
 Ray Bernor,rbernor@howard.edu,paleobiology,ToFuTRESVER_14_7_27_2020_REV_22.csv,https://de.cyverse.org/dl/d/9ADA98BC-7ECF-4AA9-847F-6DC10B572CA1/ToFuTRESVER_14_7_27_2020_REV_22.csv,21243,,315,"matched to template; ingested femur length the greater trochanter, femur length to head of femur, humerus length to ventral tubercle, humerus length to caput of humerus, breadth of the trochlea of talus, length of medial trochlea of talus, depth of the medial side of talus, length of the medial side of talus",,,,,,Y,
-Helena de Bastos Cruz Machado,hdebasto@uoregon.edu,paleobiology,Horse data_Helena.xlsx,https://de.cyverse.org/dl/d/0213F307-1723-43CE-AC30-3273E2AA5D16/Horse data_Helena.xlsx,,,,,,,,,,N,need to convert to CSV
+Helena de Bastos Cruz Machado,hdebasto@uoregon.edu,paleobiology,Horse data_Helena.xlsx,https://de.cyverse.org/dl/d/0213F307-1723-43CE-AC30-3273E2AA5D16/Horse data_Helena.xlsx,,,,in data_mapping,,,,,,N,need to convert to CSV
 Joaquin Arroyo-Cabrales,arromatu5@yahoo.com.mx,paleobiology,Alberdi-Appendix02-RMCG-TO.xls,https://de.cyverse.org/dl/d/F398C2F3-8405-42C0-B670-4BF884F4A931/Alberdi-Appendix02-RMCG-TO.xls,,,142,not yet processed,,N,,,,N,need to convert to CSV
 Joaquin Arroyo-Cabrales,arromatu5@yahoo.com.mx,paleobiology,Alberdi-Appendix01-RMCG-TO.xls,https://de.cyverse.org/dl/d/904B980C-E5E8-47AF-8AEF-01BA124FBA3D/Alberdi-Appendix01-RMCG-TO.xls,,,,not yet processed,,N,,,,,need to convert to CSV
-Juha Saarinen,juha.saarinen@helsinki.fi,paleobiology,Equus_quagga_and_E._grevyi_measurement_data.csv,https://de.cyverse.org/dl/d/08FA0E5D-D4F1-49D0-B7E9-CE37D68B0051/Equus_quagga_and_E._grevyi_measurement_data.csv,384,,27,not yet processed,,,,,,N,
+Juha Saarinen,juha.saarinen@helsinki.fi,paleobiology,Equus_quagga_and_E._grevyi_measurement_data.csv,https://de.cyverse.org/dl/d/08FA0E5D-D4F1-49D0-B7E9-CE37D68B0051/Equus_quagga_and_E._grevyi_measurement_data.csv,384,,27,notebook pretty much done,,,,,,N,
 Mark Uhen,muhen@gmu.edu,paleobiology,,,,,43,data in DE,,,,,,Y,
 DAMP VNMH,,paleobiology,,,,,,,,,,,,N,
 ,,,,,,,,,,,,,,,
@@ -18,8 +18,8 @@ Kitty Emery,kemery@flmnh.ufl.edu,modern,EAP_Florida_Modern_Deer_Measurements_FOR
 Kitty Emery,kemery@flmnh.ufl.edu,zooarchaeology,ArchaeoDeerAstragalusCalcaneus.csv,,,,,,,,,,,Y,used in Best Practices Paper
 Rick Cantryll,kemery@flmnh.ufl.edu,zooarchaeology,,,,,,waiting for data,,,,,,N,
 Reitz,,zooarchaeology,,,,,,waiting for data,,,,,,Y,
-Sebastian Alonso Yrarrazaval Ascencio,sebastian.yrarrazaval@ug.uchile.cl,zooarchaeology,FuTRES_SebastianYrarrazaval.xlsx,https://de.cyverse.org/dl/d/E4F48F67-4DCD-422C-82D9-AA1AAFDD0974/FuTRES_SebastianYrarrazaval.xlsx,20,,35,in data_mapping,,,,,,Y,need to convert to CSV
-Naomi Sykes,kemery@flmnh.ufl.edu; N.Sykes@exeter.ac.uk,zooarchaeology,,,,,,need to coallate data,,,,,,N,Neeka Sewnath working on joining tables
+Sebastian Alonso Yrarrazaval Ascencio,sebastian.yrarrazaval@ug.uchile.cl,zooarchaeology,FuTRES_SebastianYrarrazaval.xlsx,https://de.cyverse.org/dl/d/E4F48F67-4DCD-422C-82D9-AA1AAFDD0974/FuTRES_SebastianYrarrazaval.xlsx,20,,35,ready to be processed,,,,,,Y,need to convert to CSV
+Naomi Sykes,kemery@flmnh.ufl.edu; N.Sykes@exeter.ac.uk,zooarchaeology,,,,,,waiting for trait terms from Richard,,,,,,N,Neeka Sewnath working on joining tables
 Kitty Emery,kemery@flmnh.ufl.edu,zooarchaeology,FM-EAP zooarch data,,,,,waiting for data,,,,,,,
 Kitty Emery,kemery@flmnh.ufl.edu,modern,,,,,,waiting for data,,,,,,,"waiting to scan ""nasty old data"""
 Nicolas Delsol,kemery@flmnh.ufl.edu; ndelsol@ufl.edu,zooarchaeology,,,,,,waiting for data,,,,,,,GMM data
