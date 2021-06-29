@@ -79,6 +79,8 @@ def matSampType(df, dict):
         original = df["materialSampleType"]
         inpt = input("What would you like to replace " + original + " with?: ")
         dict = dict.insert(column = "userTerm", value = "str(inpt)")
+
+        dict.to_csv('MST_dict.csv')
     
     return (df, dict)
 
@@ -159,6 +161,7 @@ def yc(df):
     Create and populate yearCollected through the date column
     """
     df = df.assign(yearCollected = df['Date'].str[:4])
+    df = df.rename(columns = {"Date" : "verbatimEventDate"})
     return df
 
 #===========================================================================================================================================
