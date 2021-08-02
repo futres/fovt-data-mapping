@@ -11,6 +11,7 @@ import re
 import json
 import uuid
 import warnings
+import numpy as np
 
 from sphinx.config import eval_config_file
 
@@ -78,7 +79,7 @@ def matSampType(df, dict):
     else:
         original = df["materialSampleType"]
         inpt = input("What would you like to replace " + original + " with?: ")
-        dict = dict.insert(column = "userTerm", value = "str(inpt)")
+        dict = dict.insert(column = "userTerm", value = str(inpt))
 
         dict.to_csv('MST_dict.csv')
     
@@ -153,7 +154,6 @@ def mgConv(df):
     return df
 
 #===========================================================================================================================================
-#TODO: Date needs to be removed or turned into verbatimEventDate
 #ask which column is EventDate or use column eventDate (should have it based off READ.md)
 
 def yc(df):
@@ -174,7 +174,7 @@ def colcheck(df):
     """
     print("Checking Dataframe Columns")
 
-    geome_col_names = pd.read_csv("/Users/neeka/Desktop/FuTRES/neeka/fovt-data-mapping/Mapping Files/template_col_names.csv")
+    geome_col_names = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Mapping%20Files/template_col_names.csv")
     df_col_names = df.columns
     error = list(set(df_col_names) - set(geome_col_names["Template Column Names"]))
     required_columns = ['eventID', 'country','locality','yearCollected','samplingProtocol',
@@ -251,8 +251,27 @@ def dataMelt(df):
     """
     Converts dataframe into long format
     """
-    df = pd.melt(df, id_vars = ['Date','Sex', 'Age', 'Status', 'verbatimLocality'], 
-                    var_name = 'measurementType', value_name = 'measurementValue')
+    dataCols = []
+    dfCols = df.columns.values.tolist()
+    df = df.assign(verbatimLocality = "")
+
+    print(df.columns)
+
+    while True:
+        entry = input('Please select columns from dataframe to melt (type d when done): ')
+        if entry.lower() == 'd':
+            break
+       # elif entry.lower() not in df.columns:
+       #     print ("Column not found in dataframe")
+       #     continue
+        else:
+            dataCols.append(entry)
+
+    VARS = list(set(dfCols) - set(dataCols))
+
+    ID_VARS = np.array(VARS)
+
+    df = pd.melt(df, id_vars = ID_VARS, value_vars = dataCols, var_name = 'measurementType', value_name = 'measurementValue')
     return df
     
 #===========================================================================================================================================
@@ -264,7 +283,7 @@ def to_json(df):
     Turns all columns that are not matching to GEOME columns into a singular dynamicProperties column
     """
 
-    geome_col_names = pd.read_csv("/Users/neeka/Desktop/FuTRES/neeka/fovt-data-mapping/Mapping Files/template_col_names.csv")
+    geome_col_names = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Mapping%20Files/template_col_names.csv")
     df_col_names = df.columns
 
     non_geome_cols_names = list(set(df_col_names) - set(geome_col_names["Template Column Names"]))
@@ -311,7 +330,7 @@ if __name__ == '__main__':
     matSamp_dict = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Mapping%20Files/MST_dict.csv")
 
     # import cougar data directly from github
-    df = pd.read_csv("/Users/neeka/Desktop/FuTRES/fovt-data-mapping/Original_Data/cougar_data.csv")
+    df = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Scripts/pythonConversion/1987to2019_Cougar_Weight_Length_Public_Request.csv")
 
     colcheck(df)
 
