@@ -65,25 +65,29 @@ def verLocal(df):
 #print out unique list of what's in there
 #ask them to write a dictionary or fix it; column of theirs and fill in column with options
 
-def matSampType(df, dict):
-    """
-    More description to status column -- in connection with GENOME
-    """
+def matSampType(df):
+  ## More description to status column -- in connection with GENOME
 
-    if df["materialSampleType"] == dict["userTerm"]:
-        correction = dict["userTerm"]
-        original = df["materialSampleType"]
-        check = input("Your data frame has the value " + original + ", did you mean " + correction + "? (input ""yes"" or ""no""): ")
-        if check == "yes":
-            df["materialSampleType"] = dict["userTerm"]
-    else:
-        original = df["materialSampleType"]
-        inpt = input("What would you like to replace " + original + " with?: ")
-        dict = dict.insert(column = "userTerm", value = str(inpt))
+  dct = pd.read_csv("https://raw.githubusercontent.com/futres/fovt-data-mapping/master/Mapping%20Files/MST_dict.csv")
 
-        dict.to_csv('MST_dict.csv')
-    
-    return (df, dict)
+  if df["Status"].eq(dct["userTerm"]):
+    inpt = input(f'Would you like to replace {df["Status"]} with {dct["userTerm"]}? ')
+
+    if inpt.lower() == "yes":
+      df["Status"] = str(dct["userTerm"])
+
+  else:
+    ask = input(f'Whould you like to replace {df["Status"]}?')
+
+    if ask.lower() == "yes":
+      replace = input(f'What would you like to replace {df["Status"]} with? ')
+      df["Status"] = str(replace)
+      dct["userTerm"].append(df["Status"])
+      dct["replacedWith"].append(str(replace))
+
+  dct.to_csv('MST_dict.csv')
+  
+  return(df, dct)
 
 #===========================================================================================================================================
 #TODO: make for non-english labels
@@ -356,6 +360,7 @@ if __name__ == '__main__':
         print("This program accepts: ""inches"", ""centimeters"", ""meters"", and ""millimeters"".")
         lngth = input("What units are the length values in? ")
 
+    df = matSampType(df)
     df = handle_conversion(df)
     df = callAll(df)
 
