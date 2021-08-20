@@ -68,6 +68,36 @@ The sex functions also provides for more description within datasets. It takes v
 into "female" and "male". This function also checks for values that it does not recognize and changes them into 
 "not collected".
 
+```
+colcheck(df)
+```
+This function goes through all of the column names in the user inserted dataframe and figures out which column names do not match the FuTRES template and which of the required column names are missing.
+
+```
+verLocal(df)
+```
+The verbaitm locality function combines the existing columns which holds data regarding the location of the data into one column.
+
+```
+yc(df)
+```
+The year collected function extracts information from the *modified* date column in order to only present the year in which the data was collected.
+
+```
+countryValidity(df)
+```
+If your dataframe has a "country" column this function will make sure that all of the countries listed on there are GENOME recognized.
+
+```
+add_ms_and_evID(df)
+```
+This function creates a unique materialSampleID for the dataframe.
+
+```
+dataMelt(df)
+```
+The dataMelt function combines the quantitative measurements(like weight and length) into one column. This reduces size of the data frame and makes it cleaner.
+
 -----------------------------------------------------------------------------------------------------------------------
 
 <h3>Unit Converstion Function: Allow for a universally understood format which increases accessibility of the data.</h3>
@@ -104,14 +134,5 @@ mgConv(df)
 Conversion of milligrams to grams for the weight column. 
 
 -----------------------------------------------------------------------------------------------------------------------
-
-<h3>Changing Column Names</h3>
-
-Once all other functions have been run the program will present the data set and ask users if they would like to change the name of the columns.
-
-If the user says yes, the following function will be run:
-```
-colRename(df)
-```
-The function create an empty list and asks the user what they would like each table to be named, the user inputs are then appended to the created list.
-The list is then used to change the column names.
+<h3>After function application....</h3>
+Once users are done applying all of their desired functions they can proceed to download the cleaned version of their original dataframe onto their local drive.
