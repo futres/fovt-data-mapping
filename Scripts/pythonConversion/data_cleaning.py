@@ -72,15 +72,18 @@ def matSampType(df):
 
   if df["Status"].eq(dct["userTerm"]):
     inpt = input(f'Would you like to replace {df["Status"]} with {dct["userTerm"]}? ')
+    print("mehhh")
 
     if inpt.lower() == "yes":
       df["Status"] = str(dct["userTerm"])
 
   else:
     ask = input(f'Whould you like to replace {df["Status"]}?')
+    print("meh")
 
     if ask.lower() == "yes":
       replace = input(f'What would you like to replace {df["Status"]} with? ')
+      print("meh")
       df["Status"] = str(replace)
       dct["userTerm"].append(df["Status"])
       dct["replacedWith"].append(str(replace))
