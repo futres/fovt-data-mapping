@@ -326,6 +326,189 @@ def create_id(data):
 
     return data
 
+def trait_method(trait, data):
+    """
+    Adds measurementMethod information based off of "True" values in inferred value
+    and estimated value columns
+    """
+    
+    column = "measurementMethod_" + trait
+    
+    inferred_column = trait + ".units_inferred"
+    estimated_column = trait + ".estimated_value"
+    
+    inferred_filter = data[inferred_column].astype(str).str.contains("TRUE|True|true")
+    estimated_filter = data[estimated_column].astype(str).str.contains("TRUE|True|true")
+    
+    data[column][inferred_filter] = "Extracted with Traiter ; inferred value"
+    data[column][estimated_filter] = "Extracted with Traiter ; estimated value"
+    data[column][estimated_filter & inferred_filter] = "Extracted with Traiter ; estimated value; inferred value"
+
+def create_uni_mm(data):
+    """
+    Creates a unique measurementMethod column for each desired trait
+    """
+    # List of desired traits
+    trait_name_list = ["body_mass","ear_length","hind_foot_length",
+                    "tail_length","total_length"]
+
+    method_list = ["measurementMethod_" + x for x in trait_name_list]
+    data = data.join(pd.DataFrame(index = data.index, columns= method_list))
+
+    [trait_method(x, data) for x in trait_name_list]
+
+    data = data.drop(columns = ['body_mass.units_inferred',
+                'ear_length.units_inferred',
+                'hind_foot_length.units_inferred',
+                'tail_length.units_inferred',
+                'total_length.units_inferred',
+                'body_mass.estimated_value',
+                'ear_length.estimated_value',
+                'hind_foot_length.estimated_value',
+                'tail_length.estimated_value',
+                'total_length.estimated_value'])
+
+    # Add filler to units column
+    data["body_mass.units"]= data["body_mass.units"].fillna("unknown")
+    data["ear_length.units"] = data["ear_length.units"].fillna("unknown")
+    data["hind_foot_length.units"] = data["hind_foot_length.units"].fillna("unknown")
+    data["tail_length.units"] = data["tail_length.units"].fillna("unknown")
+    data["total_length.units"] = data["total_length.units"].fillna("unknown")
+
+    data["body_mass.value"] = data["body_mass.value"].fillna("unknown")
+    data["ear_length.value"] = data["ear_length.value"].fillna("unknown")
+    data["hind_foot_length.value"] = data["hind_foot_length.value"].fillna("unknown")
+    data["tail_length.value"] =  data["tail_length.value"].fillna("unknown")
+    data["total_length.value"] = data["total_length.value"].fillna("unknown")
+
+    data["body_mass_temp"] = data["body_mass.value"].astype(str) +" ; "+ data["body_mass.units"]
+    data["ear_length_temp"] = data["ear_length.value"].astype(str) + " ; "+data["ear_length.units"]
+    data["hind_foot_length_temp"] = data["hind_foot_length.value"].astype(str) + " ; " + data["hind_foot_length.units"]
+    data["tail_length_temp"] = data["tail_length.value"].astype(str) + " ; " + data["tail_length.units"]
+    data["total_length_temp"] = data["total_length.value"].astype(str) + " ; " + data["total_length.units"]
+
+    data = data.drop(columns = ['body_mass.value',
+                    'ear_length.value',
+                    'hind_foot_length.value',
+                    'tail_length.value',
+                    'total_length.value',
+                    'body_mass.units',
+                    'ear_length.units',
+                    'hind_foot_length.units',
+                    'tail_length.units',
+                    'total_length.units'])
+
+def long_vers(data):
+    """
+    Creating long version, first specifiying keep variables, then naming type and value
+    
+    """
+
+    melt_cols = ['catalogNumber', 'collectionCode', 'decimalLatitude','decimalLongitude',
+                'verbatimElevation','yearCollected','basisOfRecord','verbatimEventDate',
+                'institutionCode','lifeStage','verbatimLocality','locality', 'individualID',
+                'samplingProtocol','sex','scientificName', 'occurrenceRemarks','country',
+                'occurrenceID', 'verbatimLongitude', 'verbatimLatitude','materialSampleID','eventID',
+                'maximumElevationInMeters', 'minimumElevationInMeters',]
+
+    melt_cols = melt_cols + method_list
+
+    longVers  = pd.melt(data,id_vars = melt_cols, var_name = 'measurementType', value_name = 'measurementValue')
+
+    return longVers
+
+
+def method_add(trait,ind):
+    if trait == "body_mass_temp":
+        return longVers["measurementMethod_body_mass"][ind]
+    elif trait == "ear_length_temp":
+        return longVers["measurementMethod_ear_length"][ind]
+    elif trait == "hind_foot_length_temp":
+        return longVers["measurementMethod_hind_foot_length"][ind]
+    elif trait == "tail_length_temp":
+        return longVers["measurementMethod_tail_length"][ind]
+    elif trait == "total_length_temp":
+        return longVers["measurementMethod_total_length"][ind]
+
+def mm_processing(data):
+    """
+    Pull corresponding column value in measurement_method etc and append it to offical measurementMethod
+    
+    """
+    longVers = longVers.assign(measurementMethod = "")
+
+    longVers['ind'] = np.arange(len(longVers))
+
+    longVers['measurementMethod'] = longVers.apply(lambda x: method_add(x.measurementType, x.ind), axis=1)
+
+    longVers['measurementMethod'] = longVers['measurementMethod'].fillna("Extracted with Traiter")
+
+    longVers = longVers.drop(columns = method_list)
+    longVers= longVers.drop(columns = 'ind')
+
+    return longVers
+
+def trait_rename(trait): 
+    """
+    Renames trait names with trait dictionary
+    """
+    
+    # Create trait dictionary 
+    trait_dict = {'body_mass_temp':'body mass',
+                'ear_length_temp': 'ear length to notch',
+                'hind_foot_length_temp':'pes length',
+                'tail_length_temp':'tail length',
+                'total_length_temp':'body length'}
+
+    
+    
+    if trait in trait_dict.keys():
+        return trait_dict[trait]
+
+def match_traits(data):
+
+    data['measurementType'] = data['measurementType'].apply(trait_rename)
+
+    return data 
+
+def verbatim_mu(data):
+    data = data.assign(verbatimMeasurementUnit = "")
+    data[['measurementValue', 'verbatimMeasurementUnit']] = data['measurementValue'].str.split(';', expand=True)
+
+    return data
+
+def diagnostic_id(data):
+    """
+    Create diagnosticID which is a unique number for each measurement
+    """
+    
+    data['diagnosticID'] = np.arange(len(data))
+
+    return data
+
+def drop_na(data):
+
+    #Drop N/A
+    data["verbatimMeasurementUnit"] = data["verbatimMeasurementUnit"].replace({"unknown":""})
+
+    #Drop Range Values and unknowns
+    range_value_filter=data['measurementValue'].str.contains(",|one|unknown", na=False)
+    data['measurementValue'][range_value_filter] = float("nan")
+    data = data.dropna(subset=['measurementValue'])
+
+    return data
+
+def save_file(data):
+    # Create chunks list
+    chunks = []
+
+    # Separating files into chunks
+    chunks = np.array_split(data, 13)
+
+    for i in range(len(chunks)):
+        new=i+1
+        chunks[i].to_csv('../Mapped_Data/FuTRES_Mammals_VertNet_Global_Modern_'+ str(new) +'.csv', index=False)
+        print("mapped_data",i, " done")
 
 #===========================================================================================================================================
 
@@ -384,8 +567,37 @@ def main():
     print("\n Creating materialSampleID...")
     data = create_id(data)
 
-    #TODO: sort of the measurementmethod stuff
+    # Create unique measurementMethod column
+    print("\n Creating unique measurementMethod column...")
+    data = create_uni_mm(data)
 
+    # Creating long version
+    print("\n Creating long version...")
+    data = long_vers(data)
+
+    # Further measurementMethod processing
+    print("\n Processing measurement method...")
+    data = mm_processing(data)
+
+    # Matching trait and ontology terms
+    print("\n Matching trait and ontology terms...")
+    data = match_traits(data)
+
+    # Creating verbatimMeasurementUnit column
+    print("\n Create verbatimMeasurementUnit column...")
+    data = verbatim_mu(data)
+
+    # Create diagonosticID column 
+    print("\n Creating diagnosticID column...")
+    data = diagnostic_id(data)
+
+    # Drop blank measurements
+    print("\n Drop blank measurements...")
+    data = drop_na(data)
+
+    # Writing files 
+    print("\n Saving files...")
+    data = save_file(data)
 #===========================================================================================================================================
 
 if __name__ == '__main__':
